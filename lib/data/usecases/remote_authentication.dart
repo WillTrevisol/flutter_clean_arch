@@ -1,6 +1,8 @@
 import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 
 import 'package:clean_arch/data/http/http.dart';
+import 'package:clean_arch/data/entities/entities.dart';
 
 class RemoteAuthentication {
   final HttpClient httpClient;
@@ -12,10 +14,15 @@ class RemoteAuthentication {
   });
 
   Future<void> auth(AuthenticationParams params) async {
-    await httpClient.request(
-      url: url, 
-      method: 'post',
-      body: params.toMap(),
-    );
+
+    try {
+      await httpClient.request(
+        url: url,
+        method: 'post',
+        body: RemoteAuthenticationParams.fromDomain(params).toMap(),
+      );
+    } on HttpError {
+      throw DomainError.unexpected;
+    }
   }
 }

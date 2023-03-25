@@ -1,2 +1,2 @@
-export './account.dart';
-export './authentication_params.dart';
+export 'account.dart';
+export 'authentication_params.dart';
