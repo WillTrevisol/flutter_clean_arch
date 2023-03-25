@@ -3,8 +3,9 @@ import 'package:clean_arch/domain/helpers/helpers.dart';
 
 import 'package:clean_arch/data/http/http.dart';
 import 'package:clean_arch/data/entities/entities.dart';
+import 'package:clean_arch/domain/usecases/usecases.dart';
 
-class RemoteAuthentication {
+class RemoteAuthentication implements IAuthentication {
   final HttpClient httpClient;
   final String url;
 
@@ -13,7 +14,8 @@ class RemoteAuthentication {
     required this.url,
   });
 
-  Future<Account?> auth(AuthenticationParams params) async {
+  @override
+  Future<Account?> auth({required AuthenticationParams params}) async {
     try {
       final httpResponse = await httpClient.request(
         url: url,
