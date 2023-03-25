@@ -13,16 +13,19 @@ class RemoteAuthentication {
     required this.url,
   });
 
-  Future<void> auth(AuthenticationParams params) async {
-
+  Future<Account?> auth(AuthenticationParams params) async {
     try {
-      await httpClient.request(
+      final httpResponse = await httpClient.request(
         url: url,
         method: 'post',
         body: RemoteAuthenticationParams.fromDomain(params).toMap(),
       );
-    } on HttpError {
-      throw DomainError.unexpected;
+
+      return RemoteAccount.fromMap(httpResponse!).toDomainEntity();
+    } on HttpError catch (error) {
+      throw error != HttpError.unauthorized
+        ? DomainError.unexpected 
+        : DomainError.invalidCredentials;
     }
   }
 }
