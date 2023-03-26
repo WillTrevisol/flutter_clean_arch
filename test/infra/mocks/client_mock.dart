@@ -6,7 +6,7 @@ class ClientMock extends Mock implements Client {
     mockPost(200);
   }
 
-  When mockPostCall() => when(() => this.post(any(), body: any(named: 'body')));
+  When mockPostCall() => when(() => this.post(any(), body: any(named: 'body'), headers: any(named: 'headers')));
   void mockPost(int statusCode, {String body = '{"key":"value"}'}) => mockPostCall().thenAnswer((_) async => Response(body, statusCode));
   void mockPostError() => when(() => mockPostCall().thenThrow(Exception()));
 }

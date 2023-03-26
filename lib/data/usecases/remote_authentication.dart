@@ -15,7 +15,7 @@ class RemoteAuthentication implements IAuthentication {
   });
 
   @override
-  Future<Account?> auth({required AuthenticationParams params}) async {
+  Future<Account> auth({required AuthenticationParams params}) async {
     try {
       final httpResponse = await httpClient.request(
         url: url,
