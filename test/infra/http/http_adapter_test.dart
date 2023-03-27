@@ -1,42 +1,12 @@
-import 'dart:convert';
-
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/data/http/http.dart';
 
+import 'package:clean_arch/infra/http/http.dart';
+
 import '../mocks/mocks.dart';
-
-class HttpAdapter implements HttpClient {
-
-  HttpAdapter({required this.client});
-
-  final Client client;
-
-  @override
-  Future<Map<String, dynamic>?> request({
-    required String url, 
-    required String? method, 
-    Map<String, dynamic>? body,
-  }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json',
-    };
-    final response = await client.post(
-      Uri.parse(url), 
-      body: body,
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      return response.body.isNotEmpty ? jsonDecode(response.body) : null;
-    }
-    return null;
-  }
-}
 
 void main() {
 
@@ -54,6 +24,14 @@ void main() {
     url = faker.internet.uri('http');
     uri = Uri.parse(url);
     registerFallbackValue(uri);
+  });
+
+  group('SharedRequirementsGroup', () {
+    test('Should throw ServerError if invalid method is provided', () async {
+      final future = systemUnderTest.request(url: url, method: 'invalid_method');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
   });
 
   group('PostGroup', () {
@@ -108,6 +86,55 @@ void main() {
       final response = await systemUnderTest.request(url: url, method: 'post');
 
       expect(response, null);
+    });
+
+    test('Should return BadRequestError if post returns 400', () async {
+      client.mockPost(400);
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return BadRequestError if post returns 400', () async {
+      client.mockPost(400, body: '');
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return UnauthorizedError if post returns 401', () async {
+      client.mockPost(401);
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+    test('Should return ForbiddenError if post returns 403', () async {
+      client.mockPost(403);
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.forbidden));
+    });
+
+
+    test('Should return NotFoundError if post returns 404', () async {
+      client.mockPost(404);
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.notFound));
+    });
+
+    test('Should return ServerError if post returns 500', () async {
+      client.mockPost(500);
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
     });
   });
 }
