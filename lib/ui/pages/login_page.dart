@@ -37,9 +37,9 @@ class LoginPage extends StatelessWidget {
                       obscureText: true,
                     ),
                     const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: () {}, 
-                      child: const Text('ENTRAR'),
+                    const ElevatedButton(
+                      onPressed: null, 
+                      child: Text('ENTRAR'),
                     ),
                     TextButton.icon(
                       onPressed: () {}, 
