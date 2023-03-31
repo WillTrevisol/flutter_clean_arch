@@ -82,4 +82,24 @@ void main() {
     expect(passwordChildren, findsOneWidget);
   });
 
+  testWidgets('Should disable button when form is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormError();
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, null);
+  });  
+  
+  testWidgets('Should enable button when form is valid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormValid();
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, isNotNull);
+  });
+
 }
