@@ -3,17 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:clean_arch/ui/components/components.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.presenter});
 
   final LoginPresenter? presenter;
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.presenter?.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          presenter?.isLoadingStream.listen((isLoading) {
+          widget.presenter?.isLoadingStream.listen((isLoading) {
             if (isLoading) {
               showDialog(
                 barrierDismissible: false,
@@ -43,6 +55,17 @@ class LoginPage extends StatelessWidget {
             }
           });
 
+          widget.presenter?.mainErrorStream.listen((error) {
+            if (error.isNotEmpty) {
+              ScaffoldMessenger.of(context)..hideCurrentSnackBar()..showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.red[900],
+                  content: Text(error),
+                ),
+              );
+            }
+          });
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -55,7 +78,7 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       children: <Widget> [
                         StreamBuilder<String?>(
-                          stream: presenter?.emailErrorStream,
+                          stream: widget.presenter?.emailErrorStream,
                           builder: (context, snapshot) {
                             return TextFormField(
                               cursorColor: Theme.of(context).primaryColorDark,
@@ -65,13 +88,13 @@ class LoginPage extends StatelessWidget {
                                 errorText: snapshot.data?.isEmpty == true ? null : snapshot.data,
                               ),
                               keyboardType: TextInputType.emailAddress,
-                              onChanged: presenter?.validateEmail,
+                              onChanged: widget.presenter?.validateEmail,
                             );
                           }
                         ),
                         const SizedBox(height: 8),
                         StreamBuilder<String>(
-                          stream: presenter?.passwordErrorStream,
+                          stream: widget.presenter?.passwordErrorStream,
                           builder: (context, snapshot) {
                             return TextFormField(
                               cursorColor: Theme.of(context).primaryColorDark,
@@ -81,16 +104,16 @@ class LoginPage extends StatelessWidget {
                                 errorText: snapshot.data?.isEmpty == true ? null : snapshot.data,
                               ),
                               obscureText: true,
-                              onChanged: presenter?.validatePassword,
+                              onChanged: widget.presenter?.validatePassword,
                             );
                           }
                         ),
                         const SizedBox(height: 32),
                         StreamBuilder<bool>(
-                          stream: presenter?.isFormValidStream,
+                          stream: widget.presenter?.isFormValidStream,
                           builder: (context, snapshot) {
                             return ElevatedButton(
-                              onPressed: snapshot.data == true ? presenter?.authenticate : null, 
+                              onPressed: snapshot.data == true ? widget.presenter?.authenticate : null, 
                               child: const Text('ENTRAR'),
                             );
                           }
