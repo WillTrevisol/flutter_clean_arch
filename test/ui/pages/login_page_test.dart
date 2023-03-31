@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,7 +10,6 @@ import '../mocks/mocks.dart';
 void main() {
 
   late LoginPresenterMock presenter;
-  late StreamController<String> emailErrorController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterMock();
@@ -64,6 +61,25 @@ void main() {
 
     final emailTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
     expect(emailTextChildren, findsOneWidget);
+  });
+
+  testWidgets('Should present error when password is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitPasswordError('any_error');
+    await tester.pump();
+
+    expect(find.text('any_error'), findsOneWidget);
+  });
+
+  testWidgets('Should not present error when password is valid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitPasswordError('');
+    await tester.pump();
+
+    final passwordChildren = find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
+    expect(passwordChildren, findsOneWidget);
   });
 
 }

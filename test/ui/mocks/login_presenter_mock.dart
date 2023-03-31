@@ -8,13 +8,17 @@ class LoginPresenterMock extends Mock implements LoginPresenter {
 
   LoginPresenterMock() {
     when(() => emailErrorStream).thenAnswer((_) => emailErrorController.stream);
+    when(() => passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
   }
 
   final emailErrorController = StreamController<String>();
+  final passwordErrorController = StreamController<String>();
 
   void emitEmailError(String error) => emailErrorController.add(error);
+  void emitPasswordError(String error) => passwordErrorController.add(error);
   
   void dispose() {
     emailErrorController.close();
+    passwordErrorController.close();
   }
 }
