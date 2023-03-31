@@ -5,7 +5,7 @@ import 'package:clean_arch/data/http/http.dart';
 import 'package:clean_arch/data/entities/entities.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 
-class RemoteAuthentication implements IAuthentication {
+class RemoteAuthentication implements Authentication {
   final HttpClient httpClient;
   final String url;
 
