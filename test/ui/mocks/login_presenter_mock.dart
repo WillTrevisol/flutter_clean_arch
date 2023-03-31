@@ -12,23 +12,28 @@ class LoginPresenterMock extends Mock implements LoginPresenter {
     when(() => passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
     when(() => isFormValidStream).thenAnswer((_) => isFormValidController.stream);
     when(() => isLoadingStream).thenAnswer((_) => isLoadingController.stream);
+    when(() => mainErrorStream).thenAnswer((_) => mainErrorController.stream);
   }
 
   final emailErrorController = StreamController<String>();
   final passwordErrorController = StreamController<String>();
   final isFormValidController = StreamController<bool>();
   final isLoadingController = StreamController<bool>();
+  final mainErrorController = StreamController<String>();
 
   void emitEmailError(String error) => emailErrorController.add(error);
   void emitPasswordError(String error) => passwordErrorController.add(error);
   void emitFormValid() => isFormValidController.add(true);
   void emitFormError() => isFormValidController.add(false);
   void emitIsLoading(bool value) => isLoadingController.add(value);
+  void emitMainError(String error) => mainErrorController.add(error);
   
+  @override
   void dispose() {
     emailErrorController.close();
     passwordErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    mainErrorController.close();
   }
 }
