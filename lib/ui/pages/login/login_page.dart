@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:clean_arch/ui/components/components.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/ui/pages/login/components/components.dart';
+import 'package:clean_arch/ui/components/components.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.presenter});
@@ -27,42 +29,16 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context) {
           widget.presenter?.isLoadingStream.listen((isLoading) {
             if (isLoading) {
-              showDialog(
-                barrierDismissible: false,
-                context: context, 
-                builder: (context) {
-                  return SimpleDialog(
-                    children: <Widget> [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const <Widget> [
-                          CircularProgressIndicator(),
-                          SizedBox(height: 10),
-                          Text(
-                            'Aguarde...',
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              );
+              showLoading(context);
             }
-
-            if (!isLoading && Navigator.canPop(context)) {
-              Navigator.pop(context);
+            if (!isLoading) {
+              hideLoading(context);
             }
           });
 
           widget.presenter?.mainErrorStream.listen((error) {
             if (error.isNotEmpty) {
-              ScaffoldMessenger.of(context)..hideCurrentSnackBar()..showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.red[900],
-                  content: Text(error),
-                ),
-              );
+              showErrorMessage(context: context, error: error);
             }
           });
 
@@ -74,56 +50,23 @@ class _LoginPageState extends State<LoginPage> {
                 const HeadlineLarge(text: 'LOGIN'),
                 Padding(
                   padding: const EdgeInsets.all(28),
-                  child: Form(
-                    child: Column(
-                      children: <Widget> [
-                        StreamBuilder<String?>(
-                          stream: widget.presenter?.emailErrorStream,
-                          builder: (context, snapshot) {
-                            return TextFormField(
-                              cursorColor: Theme.of(context).primaryColorDark,
-                              decoration: InputDecoration(
-                                labelText: 'Email',
-                                icon: const Icon(Icons.email),
-                                errorText: snapshot.data?.isEmpty == true ? null : snapshot.data,
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              onChanged: widget.presenter?.validateEmail,
-                            );
-                          }
-                        ),
-                        const SizedBox(height: 8),
-                        StreamBuilder<String>(
-                          stream: widget.presenter?.passwordErrorStream,
-                          builder: (context, snapshot) {
-                            return TextFormField(
-                              cursorColor: Theme.of(context).primaryColorDark,
-                              decoration: InputDecoration(
-                                labelText: 'Senha',
-                                icon: const Icon(Icons.lock),
-                                errorText: snapshot.data?.isEmpty == true ? null : snapshot.data,
-                              ),
-                              obscureText: true,
-                              onChanged: widget.presenter?.validatePassword,
-                            );
-                          }
-                        ),
-                        const SizedBox(height: 32),
-                        StreamBuilder<bool>(
-                          stream: widget.presenter?.isFormValidStream,
-                          builder: (context, snapshot) {
-                            return ElevatedButton(
-                              onPressed: snapshot.data == true ? widget.presenter?.authenticate : null, 
-                              child: const Text('ENTRAR'),
-                            );
-                          }
-                        ),
-                        TextButton.icon(
-                          onPressed: () {}, 
-                          icon: const Icon(Icons.person), 
-                          label: const Text('Criar conta'),
-                        ),
-                      ],
+                  child: ListenableProvider(
+                    create: (context) => widget.presenter,
+                    child: Form(
+                      child: Column(
+                        children: <Widget> [
+                          const EmailInput(),
+                          const SizedBox(height: 8),
+                          const PasswordInput(),
+                          const SizedBox(height: 32),
+                          const LoginButton(),
+                          TextButton.icon(
+                            onPressed: () {}, 
+                            icon: const Icon(Icons.person), 
+                            label: const Text('Criar conta'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
