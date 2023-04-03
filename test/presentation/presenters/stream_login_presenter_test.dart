@@ -2,22 +2,35 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/presentation/presenters/presenters.dart';
 
+import '../../domain/mocks/mocks.dart';
 import '../mocks/mocks.dart';
 
 void main() {
 
   late StreamLoginPresenter systemUnderTest;
   late ValidationMock validation;
+  late AuthenticationMock authentication;
+  late Account account;
   late String email;
   late String password;
 
   setUp(() {
     validation = ValidationMock();
-    systemUnderTest = StreamLoginPresenter(validation: validation);
+    authentication = AuthenticationMock();
+    systemUnderTest = StreamLoginPresenter(validation: validation, authentication: authentication);
+    account = EntityFactory.account();
     email = faker.internet.email();
     password = faker.internet.password();
+    authentication.mockAuthentication(account);
+  });
+
+  setUpAll(() {
+    registerFallbackValue(EntityFactory.account());
+    registerFallbackValue(ParamsFactory.authenticationParams());
   });
   
   test('Should call validation with correct email', () {
@@ -98,6 +111,48 @@ void main() {
     systemUnderTest.validateEmail(email);
     await Future.delayed(Duration.zero);
     systemUnderTest.validatePassword(password);
+  });
+
+  test('Should call Authentication with correct values', () async {
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    await systemUnderTest.auth();
+
+    verify(() => authentication.auth(params: AuthenticationParams(email: email, password: password))).called(1);
+  });
+
+  test('Should emit correct events on Authentication success', () async {
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+
+    await systemUnderTest.auth();
+  });
+
+  test('Should emit correct events on InvalidCredentialsError', () async {
+    authentication.mockAuthenticationError(DomainError.invalidCredentials);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    expectLater(systemUnderTest.isLoadingStream, emits(false));
+    systemUnderTest.mainErrorStream
+      .listen(expectAsync1((error) => expect(error, 'Credenciais inválidas')));
+
+    await systemUnderTest.auth();
+  });
+
+  test('Should emit correct events on UnexpectedError', () async {
+    authentication.mockAuthenticationError(DomainError.unexpected);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    expectLater(systemUnderTest.isLoadingStream, emits(false));
+    systemUnderTest.mainErrorStream
+      .listen(expectAsync1((error) => expect(error, 'Algo inesperado aconteceu')));
+
+    await systemUnderTest.auth();
   });
 
 }
