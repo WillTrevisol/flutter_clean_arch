@@ -41,10 +41,6 @@ void main() {
 
       verify(() => client.post(
         uri,
-        headers: {
-          'content-type': 'application/json',
-          'accept': 'application/json',
-        },
         body: {'key': 'value'},
       ));
     });

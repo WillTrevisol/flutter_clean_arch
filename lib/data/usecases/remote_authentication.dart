@@ -28,6 +28,8 @@ class RemoteAuthentication implements Authentication {
       throw error != HttpError.unauthorized
         ? DomainError.unexpected 
         : DomainError.invalidCredentials;
+    } catch (error) {
+      throw DomainError.unexpected;
     }
   }
 }

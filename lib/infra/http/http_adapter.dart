@@ -14,10 +14,6 @@ class HttpAdapter implements HttpClient {
     required String? method, 
     Map<String, dynamic>? body,
   }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json',
-    };
 
     Response response = Response('', 500);
     try {
@@ -25,7 +21,6 @@ class HttpAdapter implements HttpClient {
         response = await client.post(
           Uri.parse(url), 
           body: body,
-          headers: headers,
         );
       }
     } catch (error) {

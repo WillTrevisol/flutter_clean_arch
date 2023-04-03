@@ -1,0 +1,1 @@
+String apiUrlFactory(String path) => 'http://fordevs.herokuapp.com/api/$path';

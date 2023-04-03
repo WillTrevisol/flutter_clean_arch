@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:clean_arch/presentation/protocols/protocols.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/ui/pages/pages.dart';
 
 class LoginState {
   String? emailError;
@@ -19,7 +21,7 @@ class LoginState {
 }
 
 
-class StreamLoginPresenter {
+class StreamLoginPresenter implements LoginPresenter {
   StreamLoginPresenter({
     required this.validation, 
     required this.authentication,
@@ -31,27 +33,36 @@ class StreamLoginPresenter {
 
   final _state = LoginState();
 
+  @override
   Stream<String?> get emailErrorStream => _controller.stream.map((state) => state.emailError).distinct();
+  @override
   Stream<String?> get passwordErrorStream => _controller.stream.map((state) => state.passwordError).distinct();
+  @override
   Stream<String?> get mainErrorStream => _controller.stream.map((state) => state.mainError).distinct();
+  @override
   Stream<bool> get isFormValidStream => _controller.stream.map((state) => state.isFormValid).distinct();
+  @override
   Stream<bool> get isLoadingStream => _controller.stream.map((state) => state.isLoading).distinct();
 
   void _update() => _controller.add(_state);
 
+  @override
   void validateEmail(String email) {
     _state.email = email;
     _state.emailError = validation.validate(field: 'email', input: email);
     _update();
   }
 
+  @override
   void validatePassword(String password) {
     _state.password = password;
     _state.passwordError = validation.validate(field: 'password', input: password);
     _update();
   }
 
-  Future<void> auth() async {
+  @override
+  Future<void> authenticate() async {
+    _state.mainError = null;
     _state.isLoading = true;
     _update();
     try {
@@ -63,8 +74,17 @@ class StreamLoginPresenter {
     _update();
   }
 
+  @override
   void dispose() {
     _controller.close();
+  }
+  
+  @override
+  void addListener(VoidCallback listener) {
+  }
+  
+  @override
+  void removeListener(VoidCallback listener) {
   }
 
 }

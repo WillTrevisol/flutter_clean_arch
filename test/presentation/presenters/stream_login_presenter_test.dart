@@ -117,7 +117,7 @@ void main() {
     systemUnderTest.validateEmail(email);
     systemUnderTest.validatePassword(password);
 
-    await systemUnderTest.auth();
+    await systemUnderTest.authenticate();
 
     verify(() => authentication.auth(params: AuthenticationParams(email: email, password: password))).called(1);
   });
@@ -128,7 +128,7 @@ void main() {
 
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
 
-    await systemUnderTest.auth();
+    await systemUnderTest.authenticate();
   });
 
   test('Should emit correct events on InvalidCredentialsError', () async {
@@ -140,7 +140,7 @@ void main() {
     systemUnderTest.mainErrorStream
       .listen(expectAsync1((error) => expect(error, 'Credenciais inválidas')));
 
-    await systemUnderTest.auth();
+    await systemUnderTest.authenticate();
   });
 
   test('Should emit correct events on UnexpectedError', () async {
@@ -152,7 +152,7 @@ void main() {
     systemUnderTest.mainErrorStream
       .listen(expectAsync1((error) => expect(error, 'Algo inesperado aconteceu')));
 
-    await systemUnderTest.auth();
+    await systemUnderTest.authenticate();
   });
 
 }
