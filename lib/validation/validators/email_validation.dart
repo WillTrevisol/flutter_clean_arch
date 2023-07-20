@@ -7,7 +7,7 @@ class EmailValidation extends Equatable implements FieldValidation {
   final String _field;
 
   @override
-  List<Object?> get props => [field];
+  List<Object?> get props => [_field];
 
   @override
   String get field => _field;
@@ -19,5 +19,4 @@ class EmailValidation extends Equatable implements FieldValidation {
     
     return isValid ? null : 'Campo inválido';
   }
-  
 }

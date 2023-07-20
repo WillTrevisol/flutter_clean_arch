@@ -6,5 +6,5 @@ import 'package:clean_arch/ui/pages/pages.dart';
 
 
 Widget loginPage() {
-  return LoginPage(presenter: loginPresenterFactory());
+  return LoginPage(presenter: getxLoginPresenterFactory());
 }

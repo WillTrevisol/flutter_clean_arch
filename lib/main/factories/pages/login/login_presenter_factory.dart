@@ -8,3 +8,10 @@ LoginPresenter loginPresenterFactory() {
     validation: loginValidationFactory(),
   );
 }
+
+LoginPresenter getxLoginPresenterFactory() {
+  return GetxLoginPresenter(
+    authentication: authenticationFactory(), 
+    validation: loginValidationFactory(),
+  );
+}

@@ -4,10 +4,10 @@ import 'package:equatable/equatable.dart';
 class RequiredFieldValidation extends Equatable implements FieldValidation {
   const RequiredFieldValidation(this._field);
 
-  final String _field;
-
   @override
-  List<Object?> get props => [field];
+  List<Object?> get props => [_field];
+
+  final String _field;
 
   @override 
   String get field => _field;
