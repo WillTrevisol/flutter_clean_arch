@@ -1,9 +1,13 @@
 import 'package:clean_arch/validation/protocols/protocols.dart';
+import 'package:equatable/equatable.dart';
 
-class EmailValidation implements FieldValidation {
-  EmailValidation(this._field);
+class EmailValidation extends Equatable implements FieldValidation {
+  const EmailValidation(this._field);
 
   final String _field;
+
+  @override
+  List<Object?> get props => [field];
 
   @override
   String get field => _field;
@@ -15,4 +19,5 @@ class EmailValidation implements FieldValidation {
     
     return isValid ? null : 'Campo inválido';
   }
+  
 }

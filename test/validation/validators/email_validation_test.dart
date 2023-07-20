@@ -7,7 +7,7 @@ void main() {
   late EmailValidation systemUnderTest;
 
   setUp(() {
-    systemUnderTest = EmailValidation('any_field');
+    systemUnderTest = const EmailValidation('any_field');
   });
 
   test('Should return null if email is empty', () {

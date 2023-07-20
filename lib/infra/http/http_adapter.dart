@@ -15,6 +15,7 @@ class HttpAdapter implements HttpClient {
     required String url, 
     required String? method, 
     Map<String, dynamic>? body,
+    Map<String, dynamic>? headers
   }) async {
     final defaultHeaders = {
       'content-type': 'application/json',

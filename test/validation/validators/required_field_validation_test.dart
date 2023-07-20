@@ -7,7 +7,7 @@ void main() {
   late RequiredFieldValidation systemUnderTest;
 
   setUp(() {
-    systemUnderTest = RequiredFieldValidation('any_field');
+    systemUnderTest = const RequiredFieldValidation('any_field');
   });
 
   test('Should return null if value is not empty', () {

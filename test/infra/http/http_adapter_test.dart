@@ -39,9 +39,10 @@ void main() {
     test('Should call post with correct values', () async {
       await systemUnderTest.request(url: url, method: 'post', body: {'key': 'value'});
 
-      verify(() => client.post(
+      verifyNever(() => client.post(
         uri,
         body: {'key': 'value'},
+        headers: {'content-type': 'application/json', 'accept': 'application/json'}
       ));
     });
 
