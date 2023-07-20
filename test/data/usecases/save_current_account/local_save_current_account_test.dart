@@ -35,21 +35,23 @@ class SecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
 }
 
 void main() {
-  test('Should call SaveSecureCacheStorage with correct values', () async {
-    final secureCacheStorage = SecureCacheStorageSpy();
-    final systemUnderTest = LocalSaveCurrentAccount(saveSecureCacheStorage: secureCacheStorage);
-    final account = Account(token: faker.guid.guid());
+  late LocalSaveCurrentAccount systemUnderTest;
+  late SecureCacheStorageSpy secureCacheStorage;
+  late Account account;
 
+  setUp(() {
+    secureCacheStorage = SecureCacheStorageSpy();
+    systemUnderTest = LocalSaveCurrentAccount(saveSecureCacheStorage: secureCacheStorage);
+    account = Account(token: faker.guid.guid());
+  });
+
+  test('Should call SaveSecureCacheStorage with correct values', () async {
     await systemUnderTest.save(account);
     verify(() => secureCacheStorage.saveSecure(key: 'token', value: account.token));
   });
 
   test('Should throw unexpected error if SaveSecureCacheStorage throws', () async {
-    final secureCacheStorage = SecureCacheStorageSpy();
-    final systemUnderTest = LocalSaveCurrentAccount(saveSecureCacheStorage: secureCacheStorage);
-    final account = Account(token: faker.guid.guid());
     secureCacheStorage.mockSaveError();
-
     final future = systemUnderTest.save(account);
     expect(future, throwsA(DomainError.unexpected));
   });
