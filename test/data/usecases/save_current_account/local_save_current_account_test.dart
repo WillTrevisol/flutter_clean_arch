@@ -4,6 +4,7 @@ import 'package:faker/faker.dart';
 
 import 'package:clean_arch/domain/entities/account.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 
 class LocalSaveCurrentAccount implements SaveCurrentAccount {
   LocalSaveCurrentAccount({required this.saveSecureCacheStorage});
@@ -12,29 +13,44 @@ class LocalSaveCurrentAccount implements SaveCurrentAccount {
 
   @override
   Future<void> save(Account account) async {
-    await saveSecureCacheStorage.save(key: 'token', value: account.token);
+    try {
+      await saveSecureCacheStorage.saveSecure(key: 'token', value: account.token);
+    } catch (error) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
 abstract class SaveSecureCacheStorage {
-  Future<void> save({required String key, required String value});
+  Future<void> saveSecure({required String key, required String value});
 }
 
 class SecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
   SecureCacheStorageSpy(){
     mockSave();
   }
-  When mockSaveCall() => when(() => save(key: any(named: 'key'), value: any(named: 'value')));
+  When mockSaveCall() => when(() => saveSecure(key: any(named: 'key'), value: any(named: 'value')));
   void mockSave() => mockSaveCall().thenAnswer((_) async => _);
+  void mockSaveError() => mockSaveCall().thenThrow(Exception());
 }
 
 void main() {
-  test('Should call SaveCacheStorage with correct values', () async {
+  test('Should call SaveSecureCacheStorage with correct values', () async {
     final secureCacheStorage = SecureCacheStorageSpy();
     final systemUnderTest = LocalSaveCurrentAccount(saveSecureCacheStorage: secureCacheStorage);
     final account = Account(token: faker.guid.guid());
 
     await systemUnderTest.save(account);
-    verify(() => secureCacheStorage.save(key: 'token', value: account.token));
+    verify(() => secureCacheStorage.saveSecure(key: 'token', value: account.token));
+  });
+
+  test('Should throw unexpected error if SaveSecureCacheStorage throws', () async {
+    final secureCacheStorage = SecureCacheStorageSpy();
+    final systemUnderTest = LocalSaveCurrentAccount(saveSecureCacheStorage: secureCacheStorage);
+    final account = Account(token: faker.guid.guid());
+    secureCacheStorage.mockSaveError();
+
+    final future = systemUnderTest.save(account);
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
