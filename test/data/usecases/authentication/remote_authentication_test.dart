@@ -8,9 +8,9 @@ import 'package:clean_arch/data/usecases/usecases.dart';
 import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
 
-import '../../domain/mocks/mocks.dart';
-import '../../infra/mocks/mocks.dart';
-import '../mocks/mocks.dart';
+import '../../../domain/mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
+import '../../mocks/mocks.dart';
 
 void main() {
 
