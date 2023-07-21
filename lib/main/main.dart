@@ -23,6 +23,7 @@ class App extends StatelessWidget {
       initialRoute: '/login',
       getPages: [
         GetPage(name: '/login', page: loginPage),
+        GetPage(name: '/surveys', page: () => const Scaffold(body: Center(child: Text('ENQUETES')))),
       ],
     );
   }

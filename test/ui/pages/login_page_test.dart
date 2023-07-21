@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:faker/faker.dart';
 
@@ -13,7 +14,13 @@ void main() {
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterMock();
-    final loginPage = MaterialApp(home: LoginPage(presenter: presenter));
+    final loginPage = GetMaterialApp(
+      initialRoute: '/login',
+      getPages: [
+        GetPage(name: '/login', page: () => LoginPage(presenter: presenter)),
+        GetPage(name: '/fake_page', page: () => const Scaffold(body: Text('fake_page')))
+      ],
+    );
     await tester.pumpWidget(loginPage);
   }
 
@@ -141,5 +148,15 @@ void main() {
     await tester.pump();
 
     expect(find.text('main_error'), findsOneWidget);
+  });
+
+  testWidgets('Should change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.natigateToPageController.add('/fake_page');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/fake_page');
+    expect(find.text('fake_page'), findsOneWidget);
   });
 }

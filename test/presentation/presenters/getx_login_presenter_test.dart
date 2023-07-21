@@ -165,4 +165,15 @@ void main() {
     await systemUnderTest.authenticate();
   });
 
+  test('Should change page on success', () async {
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    systemUnderTest.navigateToPageStream.listen(
+      expectAsync1((page) => expect(page, '/surveys'))
+    );
+
+    await systemUnderTest.authenticate();
+  });
+
 }

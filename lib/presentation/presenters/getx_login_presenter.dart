@@ -22,6 +22,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   final _emailError = Rx<String?>(null);
   final _passwordError = Rx<String?>(null);
   final _mainError = Rx<String?>(null);
+  final _navigateToPage = Rx<String>('');
   final _isFormValid = Rx<bool>(false);
   final _isLoading = Rx<bool>(false);
 
@@ -31,6 +32,8 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Stream<String?> get passwordErrorStream => _passwordError.stream;
   @override
   Stream<String?> get mainErrorStream => _mainError.stream;
+  @override
+  Stream<String> get navigateToPageStream => _navigateToPage.stream;
   @override
   Stream<bool> get isFormValidStream => _isFormValid.stream;
   @override
@@ -58,14 +61,16 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
 
   @override
   Future<void> authenticate() async {
-    _mainError.value = null;
-    _isLoading.value = true;
     try {
+      _mainError.value = null;
+      _isLoading.value = true;
       final account = await authentication.auth(params: AuthenticationParams(email: _email!, password: _password!));
       await saveCurrentAccount.save(account);
+      _navigateToPage.value = '/surveys';
     } on DomainError catch (error) {
       _mainError.value = error.description;
+    } finally {
+      _isLoading.value = false;
     }
-    _isLoading.value = false;
   }
 }
