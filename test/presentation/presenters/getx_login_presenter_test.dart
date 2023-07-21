@@ -14,6 +14,7 @@ void main() {
   late GetxLoginPresenter systemUnderTest;
   late ValidationMock validation;
   late AuthenticationMock authentication;
+  late SaveCurrentAccountMock saveCurrentAccount;
   late Account account;
   late String email;
   late String password;
@@ -21,7 +22,12 @@ void main() {
   setUp(() {
     validation = ValidationMock();
     authentication = AuthenticationMock();
-    systemUnderTest = GetxLoginPresenter(validation: validation, authentication: authentication);
+    saveCurrentAccount = SaveCurrentAccountMock();
+    systemUnderTest = GetxLoginPresenter(
+      validation: validation,
+      authentication: authentication,
+      saveCurrentAccount: saveCurrentAccount,
+    );
     account = EntityFactory.account();
     email = faker.internet.email();
     password = faker.internet.password();
@@ -106,6 +112,15 @@ void main() {
     await systemUnderTest.authenticate();
 
     verify(() => authentication.auth(params: AuthenticationParams(email: email, password: password))).called(1);
+  });
+
+  test('Should call SaveCurrentAccount with correct value', () async {
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    await systemUnderTest.authenticate();
+
+    verify(() => saveCurrentAccount.save(account)).called(1);
   });
 
   test('Should emit correct events on Authentication success', () async {

@@ -1,5 +1,10 @@
-class Account {
+import 'package:equatable/equatable.dart';
+
+class Account extends Equatable {
+  const Account({required this.token});
+
   final String token;
 
-  Account({required this.token});
+  @override
+  List<Object?> get props => [token];
 }

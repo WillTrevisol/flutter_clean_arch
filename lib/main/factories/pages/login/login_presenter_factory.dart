@@ -6,5 +6,6 @@ LoginPresenter getxLoginPresenterFactory() {
   return GetxLoginPresenter(
     authentication: authenticationFactory(), 
     validation: loginValidationFactory(),
+    saveCurrentAccount: saveLocalCurrentAccountFactory(),
   );
 }
