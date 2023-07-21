@@ -123,6 +123,17 @@ void main() {
     verify(() => saveCurrentAccount.save(account)).called(1);
   });
 
+  test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
+    saveCurrentAccount.mockSaveError();
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, 'Algo inesperado aconteceu']));
+
+    await systemUnderTest.authenticate();
+  });
+
   test('Should emit correct events on Authentication success', () async {
     systemUnderTest.validateEmail(email);
     systemUnderTest.validatePassword(password);
