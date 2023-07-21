@@ -3,36 +3,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:faker/faker.dart';
 
 import 'package:clean_arch/domain/entities/account.dart';
-import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/data/usecases/usecases.dart';
 
-class LocalSaveCurrentAccount implements SaveCurrentAccount {
-  LocalSaveCurrentAccount({required this.saveSecureCacheStorage});
-
-  final SaveSecureCacheStorage saveSecureCacheStorage;
-
-  @override
-  Future<void> save(Account account) async {
-    try {
-      await saveSecureCacheStorage.saveSecure(key: 'token', value: account.token);
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-}
-
-abstract class SaveSecureCacheStorage {
-  Future<void> saveSecure({required String key, required String value});
-}
-
-class SecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
-  SecureCacheStorageSpy(){
-    mockSave();
-  }
-  When mockSaveCall() => when(() => saveSecure(key: any(named: 'key'), value: any(named: 'value')));
-  void mockSave() => mockSaveCall().thenAnswer((_) async => _);
-  void mockSaveError() => mockSaveCall().thenThrow(Exception());
-}
+import '../../mocks/secure_cache_storage_spy.dart';
 
 void main() {
   late LocalSaveCurrentAccount systemUnderTest;
