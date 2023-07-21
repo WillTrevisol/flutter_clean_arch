@@ -1,30 +1,10 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:clean_arch/data/cache/cache.dart';
+import 'package:clean_arch/infra/cache/cache.dart';
 
-class LocalStorageAdapter implements SaveSecureCacheStorage {
-  LocalStorageAdapter({required this.secureStorage});
-
-  final FlutterSecureStorage secureStorage;
-
-  @override
-  Future<void> saveSecure({required String key, required String value}) async {
-    await secureStorage.write(key: key, value: value);
-  }
-}
-
-class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {
-  FlutterSecureStorageSpy() {
-    mockSave();
-  }
-
-  When mockSaveCall() => when(() => write(key: any(named: 'key'), value: any(named: 'value')));
-  void mockSave() => mockSaveCall().thenAnswer((_) async => _);
-  void mockSaveError() => mockSaveCall().thenThrow(Exception());
-}
+import '../mocks/local_storage_adapter_mock.dart';
 
 void main() {
   late FlutterSecureStorageSpy secureStorage;
