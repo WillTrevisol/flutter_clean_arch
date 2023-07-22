@@ -1,9 +1,9 @@
 import 'package:clean_arch/domain/entities/account.dart';
 import 'package:clean_arch/domain/usecases/load_current_account.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../domain/mocks/mocks.dart';
 
 class LocalLoadCurrentAccount implements LoadCurrentAccount {
   LocalLoadCurrentAccount({required this.fetchSecureCacheStorage});
@@ -12,13 +12,13 @@ class LocalLoadCurrentAccount implements LoadCurrentAccount {
 
   @override
   Future<Account> load() async {
-    await fetchSecureCacheStorage.fetchSecure('token');
-    return EntityFactory.account();
+    final token = await fetchSecureCacheStorage.fetchSecure('token');
+    return Account(token: token!);
   }
 }
 
 abstract class FetchSecureCacheStorage {
-  Future<void> fetchSecure(String key);
+  Future<String?> fetchSecure(String key);
 }
 
 class FetchSecureCacheStorageMock extends Mock implements FetchSecureCacheStorage {
@@ -27,20 +27,29 @@ class FetchSecureCacheStorageMock extends Mock implements FetchSecureCacheStorag
   }
 
   When mockFetchSecureCall() => when(() => fetchSecure(any()));
-  void mockFetchSecure() => mockFetchSecureCall().thenAnswer((_) async => _);
+  void mockFetchSecure({String? token}) => mockFetchSecureCall().thenAnswer((_) async => token);
 }
 
 
 void main () {
   late LocalLoadCurrentAccount systemUnderTest;
-  late FetchSecureCacheStorage fetchSecureCacheStorage;
+  late FetchSecureCacheStorageMock fetchSecureCacheStorage;
+  late String token;
+
   setUp(() {
     fetchSecureCacheStorage = FetchSecureCacheStorageMock();
     systemUnderTest = LocalLoadCurrentAccount(fetchSecureCacheStorage: fetchSecureCacheStorage);
+    token = faker.guid.guid();
+    fetchSecureCacheStorage.mockFetchSecure(token: token);
   });
 
   test('Should call FetchSecureCacheStorage with correct value', () async {
     await systemUnderTest.load();
     verify(() => fetchSecureCacheStorage.fetchSecure('token'));
+  });
+
+  test('Should return an Account', () async {
+    final accountResponse = await systemUnderTest.load();
+    expect(accountResponse, Account(token: token));
   });
 }
