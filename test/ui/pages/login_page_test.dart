@@ -159,4 +159,13 @@ void main() {
     expect(Get.currentRoute, '/fake_page');
     expect(find.text('fake_page'), findsOneWidget);
   });
+
+  testWidgets('Should not change page', (widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitNavigateToPage('');
+    await widgetTester.pump();
+
+    expect(Get.currentRoute, '/login');
+  });
 }

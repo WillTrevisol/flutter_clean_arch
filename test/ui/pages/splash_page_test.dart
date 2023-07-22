@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -11,25 +13,47 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     presenter.loadCurrentAccount();
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
+    return Scaffold(
+      body: Builder(
+        builder: (context) {
+          presenter.navigateToPageStream.listen((page) {
+            if (page.isNotEmpty) {
+              Get.offAllNamed(page);
+            }
+          });
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      )
     );
   }
 }
 
 abstract class SplashPresenter {
+  Stream<String> get navigateToPageStream;
   Future<void> loadCurrentAccount();
+
+  void dispose();
 }
 
 class SplashPresenterSpy extends Mock implements SplashPresenter {
   SplashPresenterSpy() {
     mockLoadCurrentAccount();
+    when(() => navigateToPageStream).thenAnswer((_) => navigateToPageController.stream);
   }
 
   When mockLoadCurrentAccountCall() => when(() => loadCurrentAccount());
   void mockLoadCurrentAccount() => mockLoadCurrentAccountCall().thenAnswer((_) async => _);
+
+  final navigateToPageController = StreamController<String>();
+
+  void emitNavigateToPage(String value) => navigateToPageController.add(value);
+
+  @override
+  void dispose() {
+    navigateToPageController.close();
+  }
 }
 
 void main() {
@@ -42,10 +66,13 @@ void main() {
         initialRoute: '/',
         getPages: [
           GetPage(name: '/', page: () => SplashPage(presenter: presenter)),
+          GetPage(name: '/fakePage', page: () => const Scaffold(body: Text('fake page'))),
         ],
       )
     );
   }
+
+  tearDown(() => presenter.dispose());
 
   testWidgets('Should present a loading on page load', (widgetTester) async {
     await loadPage(widgetTester);
@@ -57,5 +84,24 @@ void main() {
     await loadPage(widgetTester);
 
     verify(() => presenter.loadCurrentAccount()).called(1);
+  });
+
+  testWidgets('Should change page', (widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitNavigateToPage('/fakePage');
+    await widgetTester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/fakePage');
+    expect(find.text('fake page'), findsOneWidget);
+  });
+
+  testWidgets('Should not change page', (widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitNavigateToPage('');
+    await widgetTester.pump();
+
+    expect(Get.currentRoute, '/');
   });
 }

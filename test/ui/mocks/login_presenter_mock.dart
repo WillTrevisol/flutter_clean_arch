@@ -29,6 +29,7 @@ class LoginPresenterMock extends Mock implements LoginPresenter {
   void emitFormValid() => isFormValidController.add(true);
   void emitFormError() => isFormValidController.add(false);
   void emitIsLoading(bool value) => isLoadingController.add(value);
+  void emitNavigateToPage(String value) => natigateToPageController.add(value);
   
   @override
   void dispose() {
