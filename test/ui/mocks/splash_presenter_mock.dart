@@ -10,7 +10,7 @@ class SplashPresenterSpy extends Mock implements SplashPresenter {
     when(() => navigateToPageStream).thenAnswer((_) => navigateToPageController.stream);
   }
 
-  When mockLoadCurrentAccountCall() => when(() => loadCurrentAccount());
+  When mockLoadCurrentAccountCall() => when(() => checkAccount());
   void mockLoadCurrentAccount() => mockLoadCurrentAccountCall().thenAnswer((_) async => _);
 
   final navigateToPageController = StreamController<String>();
