@@ -2,39 +2,11 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/domain/entities/account.dart';
+import 'package:clean_arch/data/usecases/usecases.dart';
 
-class LocalLoadCurrentAccount implements LoadCurrentAccount {
-  LocalLoadCurrentAccount({required this.fetchSecureCacheStorage});
-
-  final FetchSecureCacheStorage fetchSecureCacheStorage;
-
-  @override
-  Future<Account> load() async {
-    try {
-      final token = await fetchSecureCacheStorage.fetchSecure('token');
-      return Account(token: token!);
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-}
-
-abstract class FetchSecureCacheStorage {
-  Future<String?> fetchSecure(String key);
-}
-
-class FetchSecureCacheStorageMock extends Mock implements FetchSecureCacheStorage {
-  FetchSecureCacheStorageMock() {
-    mockFetchSecure();
-  }
-
-  When mockFetchSecureCall() => when(() => fetchSecure(any()));
-  void mockFetchSecure({String? token}) => mockFetchSecureCall().thenAnswer((_) async => token);
-  void mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
-}
+import '../../mocks/fetch_secure_cache_storage_mock.dart';
 
 
 void main () {
