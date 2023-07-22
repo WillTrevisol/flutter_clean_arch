@@ -17,7 +17,7 @@ void main() {
     systemUnderTest = LocalStorageAdapter(secureStorage: secureStorage);
     key = faker.lorem.word();
     value = faker.guid.guid();
-    secureStorage.mockFetch(key: key);
+    secureStorage.mockFetch(value: value);
   });
 
   group('saveSecure()', () {
@@ -37,6 +37,11 @@ void main() {
     test('Should call fetchSecure with correct value', () async {
       await systemUnderTest.fetchSecure(key);
       verify(() => secureStorage.read(key: key));
+    });
+
+    test('Should return correct value on success', () async {
+      final fetchedValue = await systemUnderTest.fetchSecure(key);
+      expect(fetchedValue, value);
     });
   });
 }
