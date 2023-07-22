@@ -1,3 +1,4 @@
+import 'package:clean_arch/main/factories/pages/splash/splash_page_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -20,10 +21,11 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'CleanArch',
       theme: appThemeData(),
-      initialRoute: '/login',
+      initialRoute: '/',
       getPages: [
-        GetPage(name: '/login', page: loginPage),
-        GetPage(name: '/surveys', page: () => const Scaffold(body: Center(child: Text('ENQUETES')))),
+        GetPage(name: '/', page: splashPageFactory, transition: Transition.fade),
+        GetPage(name: '/login', page: loginPageFactory, transition: Transition.fadeIn),
+        GetPage(name: '/surveys', page: () => const Scaffold(body: Center(child: Text('ENQUETES'))), transition: Transition.fadeIn),
       ],
     );
   }
