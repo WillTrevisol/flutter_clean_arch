@@ -1,41 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:get/get.dart';
 
-import 'package:clean_arch/ui/pages/pages.dart';
-import 'package:clean_arch/domain/usecases/usecases.dart';
+import 'package:clean_arch/presentation/presenters/presenters.dart';
 
 import '../../domain/mocks/load_current_account_mock.dart';
 import '../../domain/mocks/mocks.dart';
-
-class GetxSplashPresenter implements SplashPresenter {
-  GetxSplashPresenter({required this.loadCurrentAccount});
-
-  final LoadCurrentAccount loadCurrentAccount;
-  final navigateToPage = Rx<String>('');
-
-  @override
-  Future<void> checkAccount() async {
-    try {
-      final account = await loadCurrentAccount.load();
-      if (account != null) {
-        navigateToPage.value = '/surveys';
-        return;
-      }
-      navigateToPage.value = '/login';
-    } catch (error) {
-      navigateToPage.value = '/login';
-    }
-  }
-
-  @override
-  Stream<String> get navigateToPageStream => navigateToPage.stream;
-  
-  @override
-  void dispose() {
-    navigateToPage.close();
-  }
-}
 
 void main() {
   late LoadCurrentAccountSpy loadCurrentAccount;
