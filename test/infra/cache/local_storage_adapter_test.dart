@@ -43,5 +43,11 @@ void main() {
       final fetchedValue = await systemUnderTest.fetchSecure(key);
       expect(fetchedValue, value);
     });
+
+    test('Should throw if fetchSecure throws', () async {
+      secureStorage.mockFetchError();
+      final future = systemUnderTest.fetchSecure(key);
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
   });
 }

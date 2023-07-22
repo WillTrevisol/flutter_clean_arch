@@ -13,4 +13,5 @@ class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {
 
   When mockFetchCall() => when(() => read(key: any(named: 'key')));
   void mockFetch({String? value}) => mockFetchCall().thenAnswer((_) async => value);
+  void mockFetchError() => mockFetchCall().thenThrow(Exception());
 }
