@@ -17,6 +17,7 @@ class GetxSplashPresenter implements SplashPresenter {
   @override
   Future<void> checkAccount() async {
     await loadCurrentAccount.load();
+    navigateToPage.value = '/surveys';
   }
 
   @override
@@ -41,5 +42,12 @@ void main() {
   test('Should call LoadCurrentAccount', () async {
     await systemUnderTest.checkAccount();
     verify(() => loadCurrentAccount.load()).called(1);
+  });
+
+  test('Should go to SurveysPage on success', () async {
+    systemUnderTest.navigateToPageStream.listen(
+      expectAsync1((page) => expect(page, '/surveys'))
+    );
+    await systemUnderTest.checkAccount();
   });
 }
