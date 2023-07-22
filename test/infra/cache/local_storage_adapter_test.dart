@@ -17,16 +17,26 @@ void main() {
     systemUnderTest = LocalStorageAdapter(secureStorage: secureStorage);
     key = faker.lorem.word();
     value = faker.guid.guid();
+    secureStorage.mockFetch(key: key);
   });
 
-  test('Should call saveSecure with correct values', () async {
-    await systemUnderTest.saveSecure(key: key, value: value);
-    verify(() => secureStorage.write(key: key, value: value));
+  group('saveSecure()', () {
+    test('Should call saveSecure with correct values', () async {
+      await systemUnderTest.saveSecure(key: key, value: value);
+      verify(() => secureStorage.write(key: key, value: value));
+    });
+
+    test('Should throw if saveSecure throws', () async {
+      secureStorage.mockSaveError();
+      final future = systemUnderTest.saveSecure(key: key, value: value);
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
   });
 
-  test('Should throw if saveSecure throws', () async {
-    secureStorage.mockSaveError();
-    final future = systemUnderTest.saveSecure(key: key, value: value);
-    expect(future, throwsA(const TypeMatcher<Exception>()));
+  group('fetchSecure()', () {
+    test('Should call fetchSecure with correct value', () async {
+      await systemUnderTest.fetchSecure(key);
+      verify(() => secureStorage.read(key: key));
+    });
   });
 }
