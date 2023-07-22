@@ -1,0 +1,36 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
+
+class SplashPage extends StatelessWidget {
+  const SplashPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+void main() {
+
+  Future<void> loadPage(WidgetTester widgetTester) async {
+    await widgetTester.pumpWidget(
+      GetMaterialApp(
+        initialRoute: '/',
+        getPages: [
+          GetPage(name: '/', page: () => const SplashPage()),
+        ],
+      )
+    );
+  }
+
+  testWidgets('Should present a loading on page load', (widgetTester) async {
+    await loadPage(widgetTester);
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+}
