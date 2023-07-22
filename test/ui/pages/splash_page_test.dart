@@ -1,60 +1,11 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
-class SplashPage extends StatelessWidget {
-  const SplashPage({required this.presenter, super.key});
+import 'package:clean_arch/ui/pages/pages.dart';
 
-  final SplashPresenter presenter;
-
-  @override
-  Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
-    return Scaffold(
-      body: Builder(
-        builder: (context) {
-          presenter.navigateToPageStream.listen((page) {
-            if (page.isNotEmpty) {
-              Get.offAllNamed(page);
-            }
-          });
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      )
-    );
-  }
-}
-
-abstract class SplashPresenter {
-  Stream<String> get navigateToPageStream;
-  Future<void> loadCurrentAccount();
-
-  void dispose();
-}
-
-class SplashPresenterSpy extends Mock implements SplashPresenter {
-  SplashPresenterSpy() {
-    mockLoadCurrentAccount();
-    when(() => navigateToPageStream).thenAnswer((_) => navigateToPageController.stream);
-  }
-
-  When mockLoadCurrentAccountCall() => when(() => loadCurrentAccount());
-  void mockLoadCurrentAccount() => mockLoadCurrentAccountCall().thenAnswer((_) async => _);
-
-  final navigateToPageController = StreamController<String>();
-
-  void emitNavigateToPage(String value) => navigateToPageController.add(value);
-
-  @override
-  void dispose() {
-    navigateToPageController.close();
-  }
-}
+import '../mocks/mocks.dart';
 
 void main() {
   late SplashPresenterSpy presenter;
