@@ -16,12 +16,16 @@ class GetxSplashPresenter implements SplashPresenter {
 
   @override
   Future<void> checkAccount() async {
-    final account = await loadCurrentAccount.load();
-    if (account != null) {
-      navigateToPage.value = '/surveys';
-      return;
+    try {
+      final account = await loadCurrentAccount.load();
+      if (account != null) {
+        navigateToPage.value = '/surveys';
+        return;
+      }
+      navigateToPage.value = '/login';
+    } catch (error) {
+      navigateToPage.value = '/login';
     }
-    navigateToPage.value = '/login';
   }
 
   @override
@@ -57,6 +61,14 @@ void main() {
 
   test('Should go to login page on null result', () async {
     loadCurrentAccount.mockLoad(account: null);
+    systemUnderTest.navigateToPageStream.listen(
+      expectAsync1((page) => expect(page, '/login'))
+    );
+    await systemUnderTest.checkAccount();
+  });
+
+  test('Should go to login page on on error', () async {
+    loadCurrentAccount.mockLoadError();
     systemUnderTest.navigateToPageStream.listen(
       expectAsync1((page) => expect(page, '/login'))
     );

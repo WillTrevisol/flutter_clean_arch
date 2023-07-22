@@ -10,4 +10,5 @@ class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount {
 
   When mockLoadCall() => when(() => load());
   void mockLoad({Account? account}) => mockLoadCall().thenAnswer((_) async => account);
+  void mockLoadError() => mockLoadCall().thenThrow(Exception());
 }
