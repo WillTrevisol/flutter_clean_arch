@@ -1,4 +1,3 @@
-import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:get/get.dart';
@@ -6,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 
+import '../../domain/mocks/load_current_account_mock.dart';
 import '../../domain/mocks/mocks.dart';
 
 class GetxSplashPresenter implements SplashPresenter {
@@ -28,20 +28,17 @@ class GetxSplashPresenter implements SplashPresenter {
   }
 }
 
-class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount {
-  LoadCurrentAccountSpy() {
-    mockLoad();
-  }
-
-  When mockLoadCall() => when(() => load());
-  void mockLoad({Account? account}) => mockLoadCall().thenAnswer((_) async => account);
-}
-
 void main() {
-  test('Should call LoadCurrentAccount', () async {
-    final loadCurrentAccount = LoadCurrentAccountSpy();
+  late LoadCurrentAccountSpy loadCurrentAccount;
+  late GetxSplashPresenter systemUnderTest;
+
+  setUp(() {
+    loadCurrentAccount = LoadCurrentAccountSpy();
+    systemUnderTest = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccount);
     loadCurrentAccount.mockLoad(account: EntityFactory.account());
-    final systemUnderTest = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccount);
+  });
+
+  test('Should call LoadCurrentAccount', () async {
     await systemUnderTest.checkAccount();
     verify(() => loadCurrentAccount.load()).called(1);
   });
