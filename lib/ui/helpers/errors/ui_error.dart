@@ -4,7 +4,8 @@ enum UiError {
   requiredField,
   invalidField,
   unexpected,
-  invalidCredentials
+  invalidCredentials,
+  emailInUse,
 }
 
 extension UiErrorExtension on UiError {
@@ -18,6 +19,8 @@ extension UiErrorExtension on UiError {
         return R.translation.unexpectedError;
       case UiError.invalidCredentials:
         return R.translation.invalidCredentials;
+      case UiError.emailInUse:
+        return R.translation.emailInUse;
       default:
         return R.translation.unexpectedError;
     }

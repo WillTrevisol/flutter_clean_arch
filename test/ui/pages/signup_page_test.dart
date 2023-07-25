@@ -182,4 +182,23 @@ void main() {
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
+
+  testWidgets('Should present error message if signup fails', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.mainErrorController.add(UiError.emailInUse);
+    await tester.pump();
+
+    expect(find.text('Esse email já está sendo usado'), findsOneWidget);
+  });
+
+  testWidgets('Should present error message if signup has error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.mainErrorController.add(UiError.unexpected);
+    await tester.pump();
+
+    expect(find.text('Algo inesperado aconteceu'), findsOneWidget);
+  });
+
 }

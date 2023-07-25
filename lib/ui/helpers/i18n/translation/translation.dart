@@ -3,7 +3,7 @@ abstract class Translation {
   String get invalidField;
   String get requiredField;
   String get unexpectedError;
-
+  String get emailInUse;
   
   String get login;
   String get name;

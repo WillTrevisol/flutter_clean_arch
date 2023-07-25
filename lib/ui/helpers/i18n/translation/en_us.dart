@@ -14,6 +14,9 @@ class EnUs implements Translation {
   String get requiredField => 'Required field';
 
   @override
+  String get emailInUse => 'This email is already in use';
+
+  @override
   String get createAccount => 'Create account';
 
   @override

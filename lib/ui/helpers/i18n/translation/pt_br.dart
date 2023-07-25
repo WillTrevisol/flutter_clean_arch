@@ -14,6 +14,9 @@ class PtBr implements Translation {
   String get requiredField => 'Campo obrigatório';
 
   @override
+  String get emailInUse => 'Esse email já está sendo usado';
+
+  @override
   String get createAccount => 'Criar conta';
 
   @override
