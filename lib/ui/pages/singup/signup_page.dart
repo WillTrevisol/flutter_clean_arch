@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/components/components.dart';
 import 'package:clean_arch/ui/pages/singup/components/components.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+  const SignUpPage({super.key, required this.presenter});
+
+  final SignUpPresenter presenter;
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -35,24 +39,27 @@ class _SignUpPageState extends State<SignUpPage> {
                   HeadlineLarge(text: R.translation.login),
                   Padding(
                     padding: const EdgeInsets.all(28),
-                    child: Form(
-                      child: Column(
-                        children: <Widget> [
-                          const NameInput(),
-                          const SizedBox(height: 8),
-                          const EmailInput(),
-                          const SizedBox(height: 8),
-                          const PasswordInput(),
-                          const SizedBox(height: 8),
-                          const PasswordConfirmationInput(),
-                          const SizedBox(height: 32),
-                          const SignUpButton(),
-                          TextButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.login_rounded),
-                            label: Text(R.translation.login),
-                          ),
-                        ],
+                    child: ListenableProvider(
+                      create: (context) => widget.presenter,
+                      child: Form(
+                        child: Column(
+                          children: <Widget> [
+                            const NameInput(),
+                            const SizedBox(height: 8),
+                            const EmailInput(),
+                            const SizedBox(height: 8),
+                            const PasswordInput(),
+                            const SizedBox(height: 8),
+                            const PasswordConfirmationInput(),
+                            const SizedBox(height: 32),
+                            const SignUpButton(),
+                            TextButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(Icons.login_rounded),
+                              label: Text(R.translation.login),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
