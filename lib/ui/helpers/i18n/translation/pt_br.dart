@@ -17,6 +17,9 @@ class PtBr implements Translation {
   String get createAccount => 'Criar conta';
 
   @override
+  String get name => 'Nome';
+
+  @override
   String get email => 'Email';
 
   @override
@@ -27,6 +30,9 @@ class PtBr implements Translation {
 
   @override
   String get password => 'Senha';
+
+  @override
+  String get passwordConfirmation => 'Confirme sua senha';
   
   @override
   String get wait => 'Aguarde...';
