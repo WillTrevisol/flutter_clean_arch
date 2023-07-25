@@ -80,4 +80,12 @@ void main() {
 
     expect(account.token, apiResponse['accessToken']);
   });
+
+  test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
+    httpClient.mockRequest({'invalid_key': 'invalid_value'});
+
+    final future = systemUnderTest.add(params: params);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
