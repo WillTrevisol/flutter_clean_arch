@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
@@ -41,6 +42,12 @@ class _SignUpPageState extends State<SignUpPage> {
           widget.presenter.mainErrorStream.listen((error) {
             if (error != null) {
               showErrorMessage(context: context, error: error.description);
+            }
+          });
+
+          widget.presenter.navigateToPageStream.listen((page) {
+            if (page.isNotEmpty) {
+              Get.offAllNamed(page);
             }
           });
 

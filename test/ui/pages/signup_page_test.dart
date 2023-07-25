@@ -19,6 +19,7 @@ void main() {
       initialRoute: '/singup',
       getPages: [
         GetPage(name: '/singup', page: () => SignUpPage(presenter: presenter)),
+        GetPage(name: '/fakePage', page: () => const Scaffold(body: Text('fakePage')))
       ],
     );
     await tester.pumpWidget(signupPage);
@@ -201,4 +202,22 @@ void main() {
     expect(find.text('Algo inesperado aconteceu'), findsOneWidget);
   });
 
+  testWidgets('Should change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.natigateToPageController.add('/fakePage');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/fakePage');
+    expect(find.text('fakePage'), findsOneWidget);
+  });
+
+  testWidgets('Should not change page', (widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitNavigateToPage('');
+    await widgetTester.pump();
+
+    expect(Get.currentRoute, '/singup');
+  });
 }
