@@ -1,3 +1,8 @@
 abstract class Validation {
-  String? validate({required String field, required String input});
+  ValidationError? validate({required String field, required String input});
+}
+
+enum ValidationError {
+  requiredField,
+  invalidField,
 }

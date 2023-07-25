@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:clean_arch/validation/validators/validators.dart';
+import 'package:clean_arch/presentation/protocols/protocols.dart';
 
 void main() {
 
@@ -19,12 +20,12 @@ void main() {
   test('Should return error if value is empty', () {
     final error = systemUnderTest.validate('');
 
-    expect(error, 'Campo obrigatório');
+    expect(error, ValidationError.requiredField);
   });
   
   test('Should return error if value is null', () {
     final error = systemUnderTest.validate(null);
 
-    expect(error, 'Campo obrigatório');
+    expect(error, ValidationError.requiredField);
   });
 }

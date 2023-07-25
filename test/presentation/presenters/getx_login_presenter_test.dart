@@ -4,6 +4,8 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/ui/helpers/helpers.dart';
+import 'package:clean_arch/presentation/protocols/protocols.dart';
 import 'package:clean_arch/presentation/presenters/presenters.dart';
 
 import '../../domain/mocks/mocks.dart';
@@ -45,10 +47,22 @@ void main() {
   });
 
   test('Should emit email error when validation fails', () {
-    validation.mockValidationError(field: 'email', value: 'error');
+    validation.mockValidationError(field: 'email', value: ValidationError.requiredField);
 
     systemUnderTest.emailErrorStream
-      .listen(expectAsync1((error) => expect(error, 'error')));
+      .listen(expectAsync1((error) => expect(error, UiError.requiredField)));
+    systemUnderTest.isFormValidStream
+      .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validateEmail(email);
+  });
+
+  test('Should emit email error when validation fails', () {
+    validation.mockValidationError(field: 'email', value: ValidationError.invalidField);
+
+    systemUnderTest.emailErrorStream
+      .listen(expectAsync1((error) => expect(error, UiError.invalidField)));
     systemUnderTest.isFormValidStream
       .listen(expectAsync1((isValid) => expect(isValid, false)));
 
@@ -72,10 +86,10 @@ void main() {
   });
 
   test('Should emit password error when validation fails', () {
-    validation.mockValidationError(field: 'password', value: 'error');
+    validation.mockValidationError(field: 'password', value: ValidationError.requiredField);
 
     systemUnderTest.passwordErrorStream
-      .listen(expectAsync1((error) => expect(error, 'error')));
+      .listen(expectAsync1((error) => expect(error, UiError.requiredField)));
     systemUnderTest.isFormValidStream
       .listen(expectAsync1((isValid) => expect(isValid, false)));
 
@@ -129,7 +143,7 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
-    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, 'Algo inesperado aconteceu']));
+    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, UiError.unexpected]));
 
     await systemUnderTest.authenticate();
   });
@@ -149,7 +163,7 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
-    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, 'Credenciais inválidas']));
+    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, UiError.invalidCredentials]));
 
     await systemUnderTest.authenticate();
   });
@@ -160,7 +174,7 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
-    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, 'Algo inesperado aconteceu']));
+    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, UiError.unexpected]));
 
     await systemUnderTest.authenticate();
   });

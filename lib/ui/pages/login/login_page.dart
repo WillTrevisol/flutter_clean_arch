@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/login/components/components.dart';
 import 'package:clean_arch/ui/components/components.dart';
 
@@ -45,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
           });
 
           widget.presenter?.mainErrorStream.listen((error) {
-            if (error?.isNotEmpty == true) {
-              showErrorMessage(context: context, error: error!);
+            if (error != null) {
+              showErrorMessage(context: context, error: error.description);
             }
           });
 
@@ -63,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget> [
                   const LoginHeader(),
-                  const HeadlineLarge(text: 'LOGIN'),
+                  HeadlineLarge(text: R.translation.login),
                   Padding(
                     padding: const EdgeInsets.all(28),
                     child: ListenableProvider(
@@ -79,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                             TextButton.icon(
                               onPressed: () {}, 
                               icon: const Icon(Icons.person), 
-                              label: const Text('Criar conta'),
+                              label: Text(R.translation.createAccount),
                             ),
                           ],
                         ),

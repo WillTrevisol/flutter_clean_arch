@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 
 import 'package:clean_arch/validation/validators/validators.dart';
+import 'package:clean_arch/presentation/protocols/protocols.dart';
 
 void main() {
 
@@ -31,6 +32,6 @@ void main() {
   test('Should return error if email is invalid', () {
     final error = systemUnderTest.validate('williantrevisol@');
 
-    expect(error, 'Campo inválido');
+    expect(error, ValidationError.invalidField);
   });
 }

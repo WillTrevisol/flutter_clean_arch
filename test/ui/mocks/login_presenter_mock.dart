@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/ui/helpers/helpers.dart';
 
 class LoginPresenterMock extends Mock implements LoginPresenter {
 
@@ -16,16 +17,16 @@ class LoginPresenterMock extends Mock implements LoginPresenter {
     when(() => navigateToPageStream).thenAnswer((_) => natigateToPageController.stream);
   }
 
-  final emailErrorController = StreamController<String>();
-  final passwordErrorController = StreamController<String>();
-  final mainErrorController = StreamController<String>();
+  final emailErrorController = StreamController<UiError?>();
+  final passwordErrorController = StreamController<UiError?>();
+  final mainErrorController = StreamController<UiError?>();
   final natigateToPageController = StreamController<String>();
   final isFormValidController = StreamController<bool>();
   final isLoadingController = StreamController<bool>();
 
-  void emitEmailError(String error) => emailErrorController.add(error);
-  void emitPasswordError(String error) => passwordErrorController.add(error);
-  void emitMainError(String error) => mainErrorController.add(error);
+  void emitEmailError(UiError? error) => emailErrorController.add(error);
+  void emitPasswordError(UiError? error) => passwordErrorController.add(error);
+  void emitMainError(UiError? error) => mainErrorController.add(error);
   void emitFormValid() => isFormValidController.add(true);
   void emitFormError() => isFormValidController.add(false);
   void emitIsLoading(bool value) => isLoadingController.add(value);
