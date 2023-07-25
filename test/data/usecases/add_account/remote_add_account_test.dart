@@ -2,8 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:faker/faker.dart';
 
-import 'package:clean_arch/data/usecases/usecases.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/data/usecases/usecases.dart';
+import 'package:clean_arch/data/http/http.dart';
 
 import '../../../domain/mocks/mocks.dart';
 import '../../../infra/mocks/mocks.dart';
@@ -39,5 +41,13 @@ void main() {
         'passwordConfirmation': params.passwordConfirmation,
       },
     ));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 400', () async {
+    httpClient.mockRequestError(HttpError.badRequest);
+
+    final future = systemUnderTest.add(params: params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }

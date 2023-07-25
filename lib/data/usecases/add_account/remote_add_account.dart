@@ -1,6 +1,7 @@
-import 'package:clean_arch/data/entities/remote_add_account_params.dart';
+import 'package:clean_arch/data/entities/entities.dart';
 import 'package:clean_arch/data/http/http.dart';
 import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 
 class RemoteAddAccount implements AddAccount {
@@ -15,13 +16,15 @@ class RemoteAddAccount implements AddAccount {
 
   @override
   Future<Account?> add({required AddAccountParams params}) async {
-    await httpClient.request(
-      url: url,
-      method: 'post',
-      body: RemoteAddAccountParams.fromDomain(params).toMap(),
-    );
-
-    return null;
+    try {
+      final httpResponse = await httpClient.request(
+        url: url,
+        method: 'post',
+        body: RemoteAddAccountParams.fromDomain(params).toMap(),
+      );
+      return RemoteAddAccountEntity.fromMap(httpResponse!).toDomainEntity();
+    } catch (error) {
+      throw DomainError.unexpected;
+    }
   }
-
 }
