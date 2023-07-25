@@ -1,3 +1,4 @@
+import 'package:clean_arch/presentation/protocols/protocols.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -12,12 +13,12 @@ void main() {
   late FieldValidationMock fieldValidation;
   late FieldValidationMock secondFieldValidation;
 
-  void mockFieldValidation(String? error) {
-    when(() => fieldValidation.validate(any())).thenReturn(error);
+  void mockFieldValidation(ValidationError? error) {
+    when(() => fieldValidation.validate(any())).thenAnswer((_) => error);
   }
 
-  void mockSecondFieldValidation(String? error) {
-    when(() => secondFieldValidation.validate(any())).thenReturn(error);
+  void mockSecondFieldValidation(ValidationError? error) {
+    when(() => secondFieldValidation.validate(any())).thenAnswer((_) => error);
   }
 
   setUp(() {
@@ -28,23 +29,22 @@ void main() {
     when(() => fieldValidation.field).thenReturn('any_field');
     mockFieldValidation(null);
     when(() => secondFieldValidation.field).thenReturn('other_field');
-    mockSecondFieldValidation('');
+    mockSecondFieldValidation(null);
 
   });
 
   test('Should return null if all validations returns null or empty', () {
-    mockSecondFieldValidation('');
     final error = systemUnderTest.validate(field: 'any_field', input: 'any_value');
 
     expect(error, null);
   });
 
   test('Should return the first error found', () {
-    mockFieldValidation('fieldValidationError');
-    mockSecondFieldValidation('secondFieldValidationError');
+    mockFieldValidation(ValidationError.requiredField);
+    mockSecondFieldValidation(null);
 
-    final error = systemUnderTest.validate(field: 'other_field', input: 'any_value');
+    final error = systemUnderTest.validate(field: 'any_field', input: 'any_value');
 
-    expect(error, 'secondFieldValidationError');
+    expect(error, ValidationError.requiredField);
   });
 }

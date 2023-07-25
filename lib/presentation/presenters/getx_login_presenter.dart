@@ -4,6 +4,7 @@ import 'package:clean_arch/presentation/protocols/protocols.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 
 class GetxLoginPresenter extends GetxController implements LoginPresenter {
@@ -19,19 +20,19 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
 
   String? _email;
   String? _password;
-  final _emailError = Rx<String?>(null);
-  final _passwordError = Rx<String?>(null);
-  final _mainError = Rx<String?>(null);
+  final _emailError = Rx<UiError?>(null);
+  final _passwordError = Rx<UiError?>(null);
+  final _mainError = Rx<UiError?>(null);
   final _navigateToPage = Rx<String>('');
   final _isFormValid = Rx<bool>(false);
   final _isLoading = Rx<bool>(false);
 
   @override
-  Stream<String?> get emailErrorStream => _emailError.stream;
+  Stream<UiError?> get emailErrorStream => _emailError.stream;
   @override
-  Stream<String?> get passwordErrorStream => _passwordError.stream;
+  Stream<UiError?> get passwordErrorStream => _passwordError.stream;
   @override
-  Stream<String?> get mainErrorStream => _mainError.stream;
+  Stream<UiError?> get mainErrorStream => _mainError.stream;
   @override
   Stream<String> get navigateToPageStream => _navigateToPage.stream;
   @override
@@ -42,15 +43,27 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   @override
   void validateEmail(String email) {
     _email = email;
-    _emailError.value = validation.validate(field: 'email', input: email);
+    _emailError.value = _validateField(field: 'email', input: email);
     validateForm();
   }
 
   @override
   void validatePassword(String password) {
     _password = password;
-    _passwordError.value = validation.validate(field: 'password', input: password);
+    _passwordError.value = _validateField(field: 'password', input: password);
     validateForm();
+  }
+
+  UiError? _validateField({required String field, required String input}) {
+    final error = validation.validate(field: field, input: input);
+    switch (error) {
+      case ValidationError.requiredField:
+        return UiError.requiredField;
+      case ValidationError.invalidField:
+        return UiError.invalidField;
+      default:
+        return null;
+    }
   }
 
   void validateForm() {
@@ -68,7 +81,14 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
       await saveCurrentAccount.save(account);
       _navigateToPage.value = '/surveys';
     } on DomainError catch (error) {
-      _mainError.value = error.description;
+      switch (error) {
+        case DomainError.unexpected:
+          _mainError.value = UiError.unexpected;
+          break;
+        case DomainError.invalidCredentials:
+          _mainError.value = UiError.invalidCredentials;
+          break;
+      }
     } finally {
       _isLoading.value = false;
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/ui/helpers/helpers.dart';
 
 class LoginButton extends StatelessWidget {
   const LoginButton({super.key});
@@ -18,7 +19,7 @@ class LoginButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             disabledBackgroundColor:Colors.grey,
           ),
-          child: const Text('ENTRAR'),
+          child: Text(R.translation.enter),
         );
       }
     );

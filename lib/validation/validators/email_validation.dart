@@ -1,5 +1,7 @@
-import 'package:clean_arch/validation/protocols/protocols.dart';
 import 'package:equatable/equatable.dart';
+
+import 'package:clean_arch/presentation/protocols/protocols.dart';
+import 'package:clean_arch/validation/protocols/protocols.dart';
 
 class EmailValidation extends Equatable implements FieldValidation {
   const EmailValidation(this._field);
@@ -13,10 +15,10 @@ class EmailValidation extends Equatable implements FieldValidation {
   String get field => _field;
 
   @override
-  String? validate(String? value) {
+  ValidationError? validate(String? value) {
     final regex = RegExp(r'\S+@\S+\.\S+');
     final isValid = value?.isNotEmpty != true || regex.hasMatch(value!);
     
-    return isValid ? null : 'Campo inválido';
+    return isValid ? null : ValidationError.invalidField;
   }
 }
