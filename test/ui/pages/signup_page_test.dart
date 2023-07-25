@@ -130,4 +130,37 @@ void main() {
     final passwordConfirmationTextChildren = find.descendant(of: find.bySemanticsLabel('Confirme sua senha'), matching: find.byType(Text));
     expect(passwordConfirmationTextChildren, findsOneWidget);
   });
+
+  testWidgets('Should disable button when form is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormError();
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, null);
+  });  
+  
+  testWidgets('Should enable button when form is valid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormValid();
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, isNotNull);
+  });
+  
+  testWidgets('Should call signup on form submit', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormValid();
+    await tester.pump();
+    await tester.ensureVisible(find.byType(ElevatedButton));
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    verify(() => presenter.signup()).called(1);
+  });
+
 }
