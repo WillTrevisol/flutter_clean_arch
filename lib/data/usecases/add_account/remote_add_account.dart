@@ -24,7 +24,9 @@ class RemoteAddAccount implements AddAccount {
       );
       return RemoteAddAccountEntity.fromMap(httpResponse!).toDomainEntity();
     } catch (error) {
-      throw DomainError.unexpected;
+      throw error == HttpError.forbidden
+        ? DomainError.emailInUse
+        : DomainError.unexpected;
     }
   }
 }

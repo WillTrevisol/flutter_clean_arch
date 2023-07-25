@@ -88,6 +88,9 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
         case DomainError.invalidCredentials:
           _mainError.value = UiError.invalidCredentials;
           break;
+        case DomainError.emailInUse:
+          _mainError.value = UiError.unexpected;
+          break;
       }
     } finally {
       _isLoading.value = false;
