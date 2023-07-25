@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/components/components.dart';
-import 'package:clean_arch/ui/pages/singup/components/components.dart';
+import 'package:clean_arch/ui/pages/signup/components/components.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.presenter});
