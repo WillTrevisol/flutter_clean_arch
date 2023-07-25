@@ -5,6 +5,7 @@ import 'package:faker/faker.dart';
 import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/ui/helpers/errors/errors.dart';
 
 import '../mocks/mocks.dart';
 
@@ -60,5 +61,73 @@ void main() {
 
     await tester.enterText(find.bySemanticsLabel('Confirme sua senha'), password);
     verify(() => presenter.validatePasswordConfirmation(password));
+  });
+
+  testWidgets('Should present email error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitEmailError(UiError.invalidField);
+    await tester.pump();
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    presenter.emitEmailError(UiError.requiredField);
+    await tester.pump();
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    presenter.emitEmailError(null);
+    await tester.pump();
+    final emailTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+    expect(emailTextChildren, findsOneWidget);
+  });
+
+  testWidgets('Should present name error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitNameError(UiError.invalidField);
+    await tester.pump();
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    presenter.emitNameError(UiError.requiredField);
+    await tester.pump();
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    presenter.emitNameError(null);
+    await tester.pump();
+    final nameTextChildren = find.descendant(of: find.bySemanticsLabel('Nome'), matching: find.byType(Text));
+    expect(nameTextChildren, findsOneWidget);
+  });
+
+  testWidgets('Should present password error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitPasswordError(UiError.invalidField);
+    await tester.pump();
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    presenter.emitPasswordError(UiError.requiredField);
+    await tester.pump();
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    presenter.emitPasswordError(null);
+    await tester.pump();
+    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
+    expect(passwordTextChildren, findsOneWidget);
+  });
+
+  testWidgets('Should present passwordConfirmation error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitPasswordConfirmationError(UiError.invalidField);
+    await tester.pump();
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    presenter.emitPasswordConfirmationError(UiError.requiredField);
+    await tester.pump();
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+    presenter.emitPasswordConfirmationError(null);
+    await tester.pump();
+    final passwordConfirmationTextChildren = find.descendant(of: find.bySemanticsLabel('Confirme sua senha'), matching: find.byType(Text));
+    expect(passwordConfirmationTextChildren, findsOneWidget);
   });
 }
