@@ -15,7 +15,7 @@ class RemoteAddAccount implements AddAccount {
 
 
   @override
-  Future<Account?> add({required AddAccountParams params}) async {
+  Future<Account> add({required AddAccountParams params}) async {
     try {
       final httpResponse = await httpClient.request(
         url: url,

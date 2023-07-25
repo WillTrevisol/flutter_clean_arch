@@ -74,4 +74,10 @@ void main() {
 
     expect(future, throwsA(DomainError.emailInUse));
   });
+
+  test('Should return an Account if HttpClient returns 200', () async {
+    final account = await systemUnderTest.add(params: params);
+
+    expect(account.token, apiResponse['accessToken']);
+  });
 }
