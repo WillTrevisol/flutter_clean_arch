@@ -162,5 +162,24 @@ void main() {
 
     verify(() => presenter.signup()).called(1);
   });
+  
+  testWidgets('Should present loading', (WidgetTester tester) async {
+    await loadPage(tester);
 
+    presenter.emitIsLoading(true);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('Should hide loading', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitIsLoading(true);
+    await tester.pump();
+    presenter.emitIsLoading(false);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
 }

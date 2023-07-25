@@ -29,6 +29,15 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: Builder(
         builder: (context) {
+          widget.presenter.isLoadingStream.listen((isLoading) {
+            if (isLoading) {
+              showLoading(context);
+            }
+            if (!isLoading) {
+              hideLoading(context);
+            }
+          });
+
           return GestureDetector(
             onTap: _hideKeyboard,
             child: SingleChildScrollView(
