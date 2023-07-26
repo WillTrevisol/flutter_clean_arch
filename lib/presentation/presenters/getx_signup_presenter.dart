@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 
+import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/presentation/protocols/protocols.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
@@ -7,9 +10,18 @@ import 'package:clean_arch/ui/pages/pages.dart';
 class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   GetxSignUpPresenter({
     required this.validation, 
+    required this.addAccount,
+    required this.saveCurrentAccount,
   });
 
   final Validation validation;
+  final AddAccount addAccount;
+  final SaveCurrentAccount saveCurrentAccount;
+
+  String? _name;
+  String? _email;
+  String? _password;
+  String? _passwordConfirmation;
 
   final _nameError = Rx<UiError?>(null);
   final _emailError = Rx<UiError?>(null);
@@ -40,24 +52,28 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
     
   @override
   void validateName(String name) {
+    _name = name;
     _nameError.value = _validateField(field: 'name', input: name);
     validateForm();
   }
 
   @override
   void validateEmail(String email) {
+    _email = email;
     _emailError.value = _validateField(field: 'email', input: email);
     validateForm();
   }
 
   @override
   void validatePassword(String password) {
+    _password = password;
     _passwordError.value = _validateField(field: 'password', input: password);
     validateForm();
   }
 
   @override
   void validatePasswordConfirmation(String passwordConfirmation) {
+    _passwordConfirmation = passwordConfirmation;
     _passwordConfirmationError.value = _validateField(field: 'passwordConfirmation', input: passwordConfirmation);
     validateForm();
   }
@@ -75,11 +91,38 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   }
 
   void validateForm() {
-    _isFormValid.value = false;
+    _isFormValid.value = _nameError.value == null 
+      && _emailError.value == null 
+      && _passwordError.value == null
+      && _passwordConfirmationError.value == null
+      && _name != null
+      && _email != null 
+      && _password != null 
+      && _passwordConfirmation != null;
   }
   
   @override
-  Future<void> signup() {
-    throw UnimplementedError();
+  Future<void> signup() async {
+    try {
+      _mainError.value = null;
+      _isLoading.value = true;
+      final account = await addAccount.add(params: AddAccountParams(name: _name!, email: _email!, password: _password!, passwordConfirmation: _passwordConfirmation!));
+      await saveCurrentAccount.save(account);
+      _navigateToPage.value = '/surveys';
+    } on DomainError catch (error) {
+      switch (error) {
+        case DomainError.unexpected:
+          _mainError.value = UiError.unexpected;
+          break;
+        case DomainError.invalidCredentials:
+          _mainError.value = UiError.invalidCredentials;
+          break;
+        case DomainError.emailInUse:
+          _mainError.value = UiError.emailInUse;
+          break;
+      }
+    } finally {
+      _isLoading.value = false;
+    }
   }
 }

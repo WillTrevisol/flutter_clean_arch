@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/presentation/protocols/protocols.dart';
 import 'package:clean_arch/presentation/presenters/presenters.dart';
@@ -10,21 +12,29 @@ import '../../domain/mocks/mocks.dart';
 import '../mocks/mocks.dart';
 
 void main() {
-
   late GetxSignUpPresenter systemUnderTest;
   late ValidationMock validation;
+  late AddAccountMock addAccount;
+  late SaveCurrentAccountMock saveCurrentAccount;
   late String email;
   late String name;
   late String password;
+  late Account account;
 
   setUp(() {
+    account = EntityFactory.account();
     validation = ValidationMock();
+    addAccount = AddAccountMock();
+    saveCurrentAccount = SaveCurrentAccountMock();
     systemUnderTest = GetxSignUpPresenter(
       validation: validation,
+      addAccount: addAccount,
+      saveCurrentAccount: saveCurrentAccount,
     );
     name = faker.person.name();
     email = faker.internet.email();
     password = faker.internet.password();
+    addAccount.mockAdd(account);
   });
 
   setUpAll(() {
@@ -196,4 +206,91 @@ void main() {
     });
   });
 
+  test('Should enable authentication function', () async {
+    systemUnderTest.nameErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    systemUnderTest.emailErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    systemUnderTest.passwordErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    systemUnderTest.passwordConfirmationErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    expectLater(systemUnderTest.isFormValidStream, emitsInOrder([false, true]));
+
+    systemUnderTest.validateName(name);
+    await Future.delayed(Duration.zero); 
+    systemUnderTest.validateEmail(email);
+    await Future.delayed(Duration.zero);
+    systemUnderTest.validatePassword(password);
+    await Future.delayed(Duration.zero);
+    systemUnderTest.validatePasswordConfirmation(password);
+  });
+
+  test('Should call AddAccount with correct values', () async {
+    systemUnderTest.validateName(name);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+    systemUnderTest.validatePasswordConfirmation(password);
+
+    await systemUnderTest.signup();
+
+    verify(() => addAccount.add(params: AddAccountParams(name: name, email: email, password: password, passwordConfirmation: password))).called(1);
+  });
+
+  test('Should call SaveCurrentAccount with correct value', () async {
+    systemUnderTest.validateName(name);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+    systemUnderTest.validatePasswordConfirmation(password);
+
+    await systemUnderTest.signup();
+
+    verify(() => saveCurrentAccount.save(account)).called(1);
+  });
+
+  test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
+    saveCurrentAccount.mockSaveError();
+    systemUnderTest.validateName(name);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+    systemUnderTest.validatePasswordConfirmation(password);
+
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, UiError.unexpected]));
+
+    await systemUnderTest.signup();
+  });
+
+  test('Should emit correct events on AddAccount success', () async {
+    systemUnderTest.validateName(name);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+    systemUnderTest.validatePasswordConfirmation(password);
+
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+
+    await systemUnderTest.signup();
+  });
+
+  test('Should emit correct events on EmailInUseError', () async {
+    addAccount.mockAddError(DomainError.emailInUse);
+    systemUnderTest.validateName(name);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+    systemUnderTest.validatePasswordConfirmation(password);
+
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(systemUnderTest.mainErrorStream, emitsInOrder([null, UiError.emailInUse]));
+
+    await systemUnderTest.signup();
+  });
+
+  test('Should change page on success', () async {
+    systemUnderTest.validateName(name);
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+    systemUnderTest.validatePasswordConfirmation(password);
+
+    systemUnderTest.navigateToPageStream.listen(
+      expectAsync1((page) => expect(page, '/surveys'))
+    );
+
+    await systemUnderTest.signup();
+  });
 }
