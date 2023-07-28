@@ -46,4 +46,9 @@ void main() {
     final error = systemUnderTest.validate(faker.randomGenerator.string(5, min: 5));
     expect(error, null);
   });
+
+  test('Should return null if value is bigger than min size', () {
+    final error = systemUnderTest.validate(faker.randomGenerator.string(10, min: 6));
+    expect(error, null);
+  });
 }
