@@ -17,14 +17,18 @@ class MinLengthValidation implements FieldValidation {
 }
 
 void main() {
+  late MinLengthValidation systemUnderTest;
+
+  setUp(() {
+    systemUnderTest = MinLengthValidation(field: 'any_field', size: 5);
+  });
+
   test('Should return error if value is empty', () {
-    final systemUnderTest = MinLengthValidation(field: 'any_field', size: 5);
     final error = systemUnderTest.validate('');
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return error if value is null', () {
-    final systemUnderTest = MinLengthValidation(field: 'any_field', size: 5);
     final error = systemUnderTest.validate(null);
     expect(error, ValidationError.invalidField);
   });
