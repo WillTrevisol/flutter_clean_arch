@@ -10,8 +10,13 @@ void main() {
     systemUnderTest = CompareFieldsValidation(field: 'any_field', valueToCompare: 'any_value');
   });
 
-  test('Should return error if value is not equal', () {
+  test('Should return error if values is not equal', () {
     final error = systemUnderTest.validate('wrong_value');
     expect(error, ValidationError.invalidField);
+  });
+
+  test('Should return null if value is equal', () {
+    final error = systemUnderTest.validate('any_value');
+    expect(error, null);
   });
 }
