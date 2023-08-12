@@ -10,9 +10,9 @@ class CompareFieldsValidation implements FieldValidation {
 
   @override
   ValidationError? validate(Map? input) {
-    if (input?[field] == input?[fieldToCompare]) {
-      return null;
+    if (input?[field] != null && input?[fieldToCompare] != null &&  input?[field] != input?[fieldToCompare]) {
+      return ValidationError.invalidField;
     }
-    return ValidationError.invalidField;
+    return null;
   }
 }
