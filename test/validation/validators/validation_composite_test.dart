@@ -34,7 +34,7 @@ void main() {
   });
 
   test('Should return null if all validations returns null or empty', () {
-    final error = systemUnderTest.validate(field: 'any_field', input: 'any_value');
+    final error = systemUnderTest.validate(field: 'any_field', input: { 'any_field' : 'any_value' });
 
     expect(error, null);
   });
@@ -43,7 +43,7 @@ void main() {
     mockFieldValidation(ValidationError.requiredField);
     mockSecondFieldValidation(null);
 
-    final error = systemUnderTest.validate(field: 'any_field', input: 'any_value');
+    final error = systemUnderTest.validate(field: 'any_field', input: { 'any_field' : 'any_value' });
 
     expect(error, ValidationError.requiredField);
   });

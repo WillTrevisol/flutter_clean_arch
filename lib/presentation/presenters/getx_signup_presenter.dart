@@ -53,33 +53,39 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   @override
   void validateName(String name) {
     _name = name;
-    _nameError.value = _validateField(field: 'name', input: name);
+    _nameError.value = _validateField('name');
     validateForm();
   }
 
   @override
   void validateEmail(String email) {
     _email = email;
-    _emailError.value = _validateField(field: 'email', input: email);
+    _emailError.value = _validateField('email');
     validateForm();
   }
 
   @override
   void validatePassword(String password) {
     _password = password;
-    _passwordError.value = _validateField(field: 'password', input: password);
+    _passwordError.value = _validateField('password');
     validateForm();
   }
 
   @override
   void validatePasswordConfirmation(String passwordConfirmation) {
     _passwordConfirmation = passwordConfirmation;
-    _passwordConfirmationError.value = _validateField(field: 'passwordConfirmation', input: passwordConfirmation);
+    _passwordConfirmationError.value = _validateField('passwordConfirmation');
     validateForm();
   }
 
-  UiError? _validateField({required String field, required String input}) {
-    final error = validation.validate(field: field, input: input);
+  UiError? _validateField(String field) {
+    final formData = {
+      'name': _name,
+      'email': _email,
+      'password': _password,
+      'passwordConfirmation': _passwordConfirmation,
+    };
+    final error = validation.validate(field: field, input: formData);
     switch (error) {
       case ValidationError.requiredField:
         return UiError.requiredField;

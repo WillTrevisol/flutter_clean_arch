@@ -42,8 +42,9 @@ void main() {
   });
   
   test('Should call validation with correct email', () {
+    final formData = { 'email': email, 'password': null };
     systemUnderTest.validateEmail(email);
-    verify(() => validation.validate(field:'email', input: email)).called(1);
+    verify(() => validation.validate(field:'email', input: formData)).called(1);
   });
 
   test('Should emit email error when validation fails', () {
@@ -81,8 +82,9 @@ void main() {
   });
 
   test('Should call validation with correct password', () {
+    final formData = { 'email': null, 'password': password };
     systemUnderTest.validatePassword(password);
-    verify(() => validation.validate(field:'password', input: password)).called(1);
+    verify(() => validation.validate(field:'password', input: formData)).called(1);
   });
 
   test('Should emit password error when validation fails', () {

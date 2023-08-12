@@ -44,8 +44,9 @@ void main() {
 
   group('EmailInput Validation', () {
     test('Should call validation with correct email', () {
+      final formData = { 'name': null, 'email': email, 'password': null, 'passwordConfirmation': null };
       systemUnderTest.validateEmail(email);
-      verify(() => validation.validate(field:'email', input: email)).called(1);
+      verify(() => validation.validate(field:'email', input: formData)).called(1);
     });
 
     test('Should emit email error when validation fails', () {
@@ -85,8 +86,9 @@ void main() {
 
   group('NameInput Validation', () {
     test('Should call validation with correct name', () {
+      final formData = { 'name': name, 'email': null, 'password': null, 'passwordConfirmation': null };
       systemUnderTest.validateName(name);
-      verify(() => validation.validate(field: 'name', input: name)).called(1);
+      verify(() => validation.validate(field: 'name', input: formData)).called(1);
     });
 
     test('Should emit name error when validation fails', () {
@@ -126,8 +128,9 @@ void main() {
 
   group('PasswordInput Validation', () {
     test('Should call validation with correct password', () {
+      final formData = { 'name': null, 'email': null, 'password': password, 'passwordConfirmation': null };
       systemUnderTest.validatePassword(password);
-      verify(() => validation.validate(field: 'password', input: password)).called(1);
+      verify(() => validation.validate(field: 'password', input: formData)).called(1);
     });
 
     test('Should emit password error when validation fails', () {
@@ -167,8 +170,9 @@ void main() {
 
   group('PasswordConfirmationInput Validation', () {
     test('Should call validation with correct passwordConfirmation', () {
+      final formData = { 'name': null, 'email': null, 'password': null, 'passwordConfirmation': password };
       systemUnderTest.validatePasswordConfirmation(password);
-      verify(() => validation.validate(field: 'passwordConfirmation', input: password)).called(1);
+      verify(() => validation.validate(field: 'passwordConfirmation', input: formData)).called(1);
     });
 
     test('Should emit passwordConfirmation error when validation fails', () {

@@ -12,25 +12,25 @@ void main() {
   });
 
   test('Should return null if email is empty', () {
-    final error = systemUnderTest.validate('');
+    final error = systemUnderTest.validate({ 'any_field': '' });
 
     expect(error, null);
   });
 
   test('Should return null if email is null', () {
-    final error = systemUnderTest.validate(null);
+    final error = systemUnderTest.validate({ 'any_field': null });
 
     expect(error, null);
   });
 
   test('Should return null if email is valid', () {
-    final error = systemUnderTest.validate('williantrevisol@outlook.com');
+    final error = systemUnderTest.validate({ 'any_field': 'williantrevisol@outlook.com' });
 
     expect(error, null);
   });
 
   test('Should return error if email is invalid', () {
-    final error = systemUnderTest.validate('williantrevisol@');
+    final error = systemUnderTest.validate({ 'any_field': 'williantrevisol@' });
 
     expect(error, ValidationError.invalidField);
   });

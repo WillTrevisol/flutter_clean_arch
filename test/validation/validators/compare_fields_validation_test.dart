@@ -7,16 +7,18 @@ void main() {
   late CompareFieldsValidation systemUnderTest;
 
   setUp(() {
-    systemUnderTest = CompareFieldsValidation(field: 'any_field', valueToCompare: 'any_value');
+    systemUnderTest = CompareFieldsValidation(field: 'any_field', fieldToCompare: 'another_field');
   });
 
   test('Should return error if values is not equal', () {
-    final error = systemUnderTest.validate('wrong_value');
+    final formData = { 'any_field': 'any_value', 'another_field': 'another_value' };
+    final error = systemUnderTest.validate(formData);
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return null if value is equal', () {
-    final error = systemUnderTest.validate('any_value');
+    final formData = { 'any_field': 'any_value', 'another_field': 'any_value' };
+    final error = systemUnderTest.validate(formData);
     expect(error, null);
   });
 }
