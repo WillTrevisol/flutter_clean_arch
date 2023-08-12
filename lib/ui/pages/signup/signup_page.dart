@@ -76,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             const SizedBox(height: 32),
                             const SignUpButton(),
                             TextButton.icon(
-                              onPressed: () {},
+                              onPressed: () => Get.offAndToNamed('login'),
                               icon: const Icon(Icons.login_rounded),
                               label: Text(R.translation.login),
                             ),
