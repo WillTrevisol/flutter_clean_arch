@@ -13,7 +13,7 @@ class GetxSplashPresenter implements SplashPresenter {
   Future<void> checkAccount() async {
     try {
       final account = await loadCurrentAccount.load();
-      if (account != null) {
+      if (account != null && account.token.isNotEmpty) {
         navigateToPage.value = '/surveys';
         return;
       }

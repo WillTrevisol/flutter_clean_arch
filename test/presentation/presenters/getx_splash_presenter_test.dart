@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/presentation/presenters/presenters.dart';
+import 'package:clean_arch/domain/entities/entities.dart';
 
 import '../../domain/mocks/load_current_account_mock.dart';
 import '../../domain/mocks/mocks.dart';
@@ -30,6 +31,14 @@ void main() {
 
   test('Should go to login page on null result', () async {
     loadCurrentAccount.mockLoad(account: null);
+    systemUnderTest.navigateToPageStream.listen(
+      expectAsync1((page) => expect(page, '/login'))
+    );
+    await systemUnderTest.checkAccount();
+  });
+
+  test('Should go to login page on null token', () async {
+    loadCurrentAccount.mockLoad(account: const Account(token: ''));
     systemUnderTest.navigateToPageStream.listen(
       expectAsync1((page) => expect(page, '/login'))
     );
