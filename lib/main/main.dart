@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import 'package:clean_arch/main/factories/factories.dart';
 import 'package:clean_arch/ui/components/components.dart';
-import 'package:clean_arch/main/factories/pages/login/login_page_factory.dart';
-import 'package:clean_arch/main/factories/pages/splash/splash_page_factory.dart';
+
 
 void main() {
   runApp(const App());
@@ -25,6 +25,7 @@ class App extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: splashPageFactory, transition: Transition.fade),
         GetPage(name: '/login', page: loginPageFactory, transition: Transition.fadeIn),
+        GetPage(name: '/signup', page: signUpPageFactory),
         GetPage(name: '/surveys', page: () => const Scaffold(body: Center(child: Text('ENQUETES'))), transition: Transition.fadeIn),
       ],
     );

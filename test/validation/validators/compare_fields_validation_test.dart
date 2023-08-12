@@ -7,7 +7,7 @@ void main() {
   late CompareFieldsValidation systemUnderTest;
 
   setUp(() {
-    systemUnderTest = CompareFieldsValidation(field: 'any_field', fieldToCompare: 'another_field');
+    systemUnderTest = const CompareFieldsValidation(field: 'any_field', fieldToCompare: 'another_field');
   });
 
   test('Should return null on invalid cases', () {
