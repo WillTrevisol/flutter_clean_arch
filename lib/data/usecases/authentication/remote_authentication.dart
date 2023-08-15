@@ -6,13 +6,13 @@ import 'package:clean_arch/data/entities/entities.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 
 class RemoteAuthentication implements Authentication {
-  final HttpClient httpClient;
-  final String url;
-
   RemoteAuthentication({
     required this.httpClient,
     required this.url,
   });
+
+  final HttpClient httpClient;
+  final String url;
 
   @override
   Future<Account> auth({required AuthenticationParams params}) async {

@@ -1,4 +1,6 @@
-class Survey {
+import 'package:equatable/equatable.dart';
+
+class Survey extends Equatable {
   const Survey({
     required this.id,
     required this.question,
@@ -10,5 +12,8 @@ class Survey {
   final String question;
   final DateTime date;
   final bool didAnswer;
+  
+  @override
+  List<Object?> get props => [ id, question, date, didAnswer ];
 
 }

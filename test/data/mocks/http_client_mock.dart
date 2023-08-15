@@ -10,6 +10,6 @@ class HttpClientMock extends Mock implements HttpClient {
     body: any(named: 'body'),
   ));
 
-  void mockRequest(Map<String, dynamic> data) => mockRequestCall().thenAnswer((_) async => data);
+  void mockRequest(dynamic data) => mockRequestCall().thenAnswer((_) async => data);
   void mockRequestError(HttpError error) => mockRequestCall().thenThrow(error);
 }

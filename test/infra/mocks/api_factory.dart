@@ -7,4 +7,23 @@ class ApiFactory {
     'name': faker.person.name(),
   };
 
+  static Map<String, dynamic> surveyMap() => {
+    'id': faker.guid.guid(),
+    'question': faker.randomGenerator.string(50),
+    'didAnswer': faker.randomGenerator.boolean(),
+    'date': faker.date.dateTime().toIso8601String(),
+  };
+
+  static List<Map<String, dynamic>> surveyListMap() => [{
+    'id': faker.guid.guid(),
+    'question': faker.randomGenerator.string(50),
+    'didAnswer': faker.randomGenerator.boolean(),
+    'date': faker.date.dateTime().toIso8601String(),
+  }, {
+    'id': faker.guid.guid(),
+    'question': faker.randomGenerator.string(50),
+    'didAnswer': faker.randomGenerator.boolean(),
+    'date': faker.date.dateTime().toIso8601String(),
+  }];
+
 }
