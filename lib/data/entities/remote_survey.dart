@@ -1,4 +1,5 @@
 import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/data/http/http.dart';
 
 class RemoteSurvey {
   final String id;
@@ -14,6 +15,10 @@ class RemoteSurvey {
   });
 
   factory RemoteSurvey.fromMap(Map<String, dynamic> data) {
+    if (!data.keys.toSet().containsAll(['id', 'question', 'date', 'didAnswer'])) {
+      throw HttpError.invalidData;
+    }
+
     return RemoteSurvey(
       id: data['id'],
       question: data['question'],

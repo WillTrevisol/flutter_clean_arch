@@ -1,4 +1,6 @@
-import 'package:clean_arch/data/entities/entities.dart';
+
+import 'dart:developer';
+
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -6,6 +8,8 @@ import 'package:test/test.dart';
 import 'package:clean_arch/data/http/http.dart';
 import 'package:clean_arch/domain/entities/survey.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
+import 'package:clean_arch/data/entities/entities.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 
 import '../../../infra/mocks/mocks.dart';
 import '../../mocks/http_client_mock.dart';
@@ -18,8 +22,13 @@ class RemoteLoadSurveys implements LoadSurveys {
 
   @override
   Future<List<Survey>> load() async {
-    final httpResponse = await httpClient.request(url: url, method: 'get');
-    return httpResponse.map<Survey>((data) => RemoteSurvey.fromMap(data).toDomainEntity()).toList();
+    try {
+      final httpResponse = await httpClient.request(url: url, method: 'get');
+      return httpResponse.map<Survey>((data) => RemoteSurvey.fromMap(data).toDomainEntity()).toList();
+    } catch (error) {
+      log(error.toString());
+      throw DomainError.unexpected;
+    }
   }
 }
 
@@ -60,5 +69,11 @@ void main() {
         didAnswer: responseData[1]['didAnswer'],
       )
     ]);
+  });
+
+  test('Should throw UnexpectedError if HttpClient return 200 with invalid data', () {
+    httpClient.mockRequest([{ 'invalid_key' : 'invalid_value' }]);
+    final future = systemUnderTest.load();
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
