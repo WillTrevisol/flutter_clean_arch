@@ -22,12 +22,18 @@ class RemoteLoadSurveys implements LoadSurveys {
 }
 
 void main() {
-  test('Should call HttpClient with correct values', () async {
-    final url = faker.internet.httpsUrl();
-    final httpClient = HttpClientMock();
-    httpClient.mockRequest({ 'surveys': <Survey>[] });
-    final systemUnderTest = RemoteLoadSurveys(url: url, httpClient: httpClient);
+  late HttpClientMock httpClient;
+  late RemoteLoadSurveys systemUnderTest;
+  late String url;
 
+  setUp(() {
+    url = faker.internet.httpsUrl();
+    httpClient = HttpClientMock();
+    systemUnderTest = RemoteLoadSurveys(url: url, httpClient: httpClient);
+    httpClient.mockRequest({ 'surveys': <Survey>[] });
+  });
+
+  test('Should call HttpClient with correct values', () async {
     await systemUnderTest.load();
 
     verify(() => httpClient.request(url: url, method: 'get'));
