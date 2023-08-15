@@ -1,36 +1,14 @@
-
-import 'dart:developer';
-
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_arch/data/usecases/usecases.dart';
 import 'package:clean_arch/data/http/http.dart';
-import 'package:clean_arch/data/entities/entities.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
-import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/domain/entities/entities.dart';
 
 import '../../../infra/mocks/mocks.dart';
 import '../../mocks/http_client_mock.dart';
-
-class RemoteLoadSurveys implements LoadSurveys {
-  const RemoteLoadSurveys({required this.url, required this.httpClient});
-
-  final String url;
-  final HttpClient httpClient;
-
-  @override
-  Future<List<Survey>> load() async {
-    try {
-      final httpResponse = await httpClient.request(url: url, method: 'get');
-      return httpResponse.map<Survey>((data) => RemoteSurvey.fromMap(data).toDomainEntity()).toList();
-    } catch (error) {
-      log(error.toString());
-      throw error == HttpError.forbidden ? DomainError.accessDenied : DomainError.unexpected;
-    }
-  }
-}
 
 void main() {
   late HttpClientMock httpClient;
