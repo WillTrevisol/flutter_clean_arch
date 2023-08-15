@@ -6,10 +6,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_arch/data/http/http.dart';
-import 'package:clean_arch/domain/entities/survey.dart';
-import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/data/entities/entities.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/domain/usecases/usecases.dart';
+import 'package:clean_arch/domain/entities/entities.dart';
 
 import '../../../infra/mocks/mocks.dart';
 import '../../mocks/http_client_mock.dart';
@@ -27,7 +27,7 @@ class RemoteLoadSurveys implements LoadSurveys {
       return httpResponse.map<Survey>((data) => RemoteSurvey.fromMap(data).toDomainEntity()).toList();
     } catch (error) {
       log(error.toString());
-      throw DomainError.unexpected;
+      throw error == HttpError.forbidden ? DomainError.accessDenied : DomainError.unexpected;
     }
   }
 }
@@ -75,5 +75,29 @@ void main() {
     httpClient.mockRequest([{ 'invalid_key' : 'invalid_value' }]);
     final future = systemUnderTest.load();
     expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 404', () async {
+    httpClient.mockRequestError(HttpError.notFound);
+
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+  
+  test('Should throw UnexpectedError if HttpClient returns 500', () async {
+    httpClient.mockRequestError(HttpError.serverError);
+
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw AccessDeniedError if HttpClient returns 403', () async {
+    httpClient.mockRequestError(HttpError.forbidden);
+
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.accessDenied));
   });
 }

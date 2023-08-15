@@ -126,6 +126,9 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
         case DomainError.emailInUse:
           _mainError.value = UiError.emailInUse;
           break;
+        case DomainError.accessDenied:
+        _mainError.value = UiError.unexpected;
+          break;
       }
     } finally {
       _isLoading.value = false;
