@@ -199,5 +199,14 @@ void main() {
 
       expect(future, throwsA(HttpError.unauthorized));
     });
+
+    test('Should return ForbiddenError if post returns 403', () async {
+      client.mockGet(403);
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.forbidden));
+    });
+
   });
 }
