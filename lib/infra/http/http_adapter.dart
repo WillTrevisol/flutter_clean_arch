@@ -31,6 +31,11 @@ class HttpAdapter implements HttpClient {
           headers: defaultHeaders,
           body: jsonBody,
         );
+      } else if (method == 'get') {
+        response = await client.get(
+          Uri.parse(url),
+          headers: defaultHeaders,
+        );
       }
     } catch (error) {
       throw HttpError.serverError;

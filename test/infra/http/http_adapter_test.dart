@@ -134,4 +134,16 @@ void main() {
       expect(future, throwsA(HttpError.serverError));
     });
   });
+
+  group('GetGroup', () {
+
+    test('Should call get with correct values', () async {
+      await systemUnderTest.request(url: url, method: 'get');
+
+      verify(() => client.get(
+        uri,
+        headers: {'content-type': 'application/json', 'accept': 'application/json'}
+      ));
+    });
+  });
 }
