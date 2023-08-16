@@ -146,14 +146,30 @@ void main() {
       ));
     });
 
-    test('Should return data if post returns 200', () async {
+    test('Should return data if get returns 200', () async {
       final response = await systemUnderTest.request(url: url, method: 'get');
 
       expect(response, {"key":"value"});
     });
 
-    test('Should return null if post returns 200 with no data', () async {
+    test('Should return null if get returns 200 with no data', () async {
       client.mockGet(200, body: '');
+
+      final response = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(response, null);
+    });
+
+    test('Should return null if get returns 204', () async {
+      client.mockGet(204, body: '');
+
+      final response = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(response, null);
+    });
+
+    test('Should return null if get returns 204 with data', () async {
+      client.mockGet(204);
 
       final response = await systemUnderTest.request(url: url, method: 'get');
 
