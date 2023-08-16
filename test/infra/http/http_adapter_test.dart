@@ -191,5 +191,13 @@ void main() {
 
       expect(future, throwsA(HttpError.badRequest));
     });
+
+    test('Should return UnauthorizedError if get returns 401', () async {
+      client.mockGet(401);
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
   });
 }
