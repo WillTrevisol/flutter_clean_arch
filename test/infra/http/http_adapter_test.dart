@@ -145,5 +145,19 @@ void main() {
         headers: {'content-type': 'application/json', 'accept': 'application/json'}
       ));
     });
+
+    test('Should return data if post returns 200', () async {
+      final response = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(response, {"key":"value"});
+    });
+
+    test('Should return null if post returns 200 with no data', () async {
+      client.mockGet(200, body: '');
+
+      final response = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(response, null);
+    });
   });
 }
