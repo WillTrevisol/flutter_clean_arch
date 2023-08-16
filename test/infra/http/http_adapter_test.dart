@@ -175,5 +175,21 @@ void main() {
 
       expect(response, null);
     });
+
+    test('Should return BadRequestError if get returns 400', () async {
+      client.mockGet(400);
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return BadRequestError if get returns 400', () async {
+      client.mockGet(400, body: '');
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
   });
 }
