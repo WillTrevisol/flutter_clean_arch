@@ -33,14 +33,21 @@ class SurveysPage extends StatelessWidget {
             stream: presenter.surveysStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Column(
-                  children: [
-                    Text(snapshot.error.toString()),
-                    ElevatedButton(
-                      onPressed: () => presenter.loadData(),
-                      child: Text(R.translation.reload),
-                    )
-                  ],
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(40),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget> [
+                        Text(snapshot.error.toString()),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () => presenter.loadData(),
+                          child: Text(R.translation.reload),
+                        )
+                      ],
+                    ),
+                  ),
                 );
               }
 
