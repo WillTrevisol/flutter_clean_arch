@@ -15,12 +15,12 @@ class HttpAdapter implements HttpClient {
     required String url, 
     required String? method, 
     Map<String, dynamic>? body,
-    Map<String, dynamic>? headers
+    Map<String, dynamic>? headers,
   }) async {
-    final defaultHeaders = {
+    final defaultHeaders = headers?.cast<String, String>() ?? {}..addAll({
       'content-type': 'application/json',
       'accept': 'application/json'
-    };
+    });
     final jsonBody = body != null ? jsonEncode(body) : null;
     Response response = Response('', 500);
 

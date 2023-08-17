@@ -44,6 +44,14 @@ void main() {
         body: {'key': 'value'},
         headers: {'content-type': 'application/json', 'accept': 'application/json'}
       ));
+
+      await systemUnderTest.request(url: url, method: 'post', body: {'key': 'value'}, headers: { 'any_header': 'any_value' });
+
+      verifyNever(() => client.post(
+        uri,
+        body: {'key': 'value'},
+        headers: {'content-type': 'application/json', 'accept': 'application/json', 'any_header': 'any_value'}
+      ));
     });
 
     test('Should call post without a body', () async {
@@ -143,6 +151,13 @@ void main() {
       verify(() => client.get(
         uri,
         headers: {'content-type': 'application/json', 'accept': 'application/json'}
+      ));
+
+      await systemUnderTest.request(url: url, method: 'get', headers: { 'any_header': 'any_value' });
+
+      verify(() => client.get(
+        uri,
+        headers: {'content-type': 'application/json', 'accept': 'application/json', 'any_header': 'any_value'}
       ));
     });
 
