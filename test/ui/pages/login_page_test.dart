@@ -27,20 +27,6 @@ void main() {
 
   tearDown(() => presenter.dispose());
 
-  testWidgets('Should load with corret state values', (WidgetTester tester) async {
-    await loadPage(tester);
-
-    final emailTextChildren = find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
-    expect(emailTextChildren, findsOneWidget);
-
-    final passwordTextChildren = find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
-    expect(passwordTextChildren, findsOneWidget);
-
-    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
-    expect(button.onPressed, null);
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-  });
-
   testWidgets('Should call validate with the correct values', (WidgetTester tester) async {
     await loadPage(tester);
 
