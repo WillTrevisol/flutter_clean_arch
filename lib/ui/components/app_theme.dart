@@ -4,14 +4,24 @@ ThemeData appThemeData() {
   const primaryColor = Color.fromRGBO(136, 14, 79, 1);
   const primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
   const primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
+  const secondaryColorDark = Color.fromRGBO(0, 37, 26, 1);
   
   return ThemeData(
     useMaterial3: true,
     primaryColor: primaryColor,
     primaryColorLight: primaryColorLight,
     primaryColorDark: primaryColorDark,
+    secondaryHeaderColor: secondaryColorDark,
     primarySwatch: Colors.pink,
     scaffoldBackgroundColor: Colors.white,
+    appBarTheme: const AppBarTheme(
+      centerTitle: true,
+      color: primaryColor,
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 24,
+      ),
+    ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontSize: 28,

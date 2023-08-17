@@ -40,4 +40,7 @@ class PtBr implements Translation {
   @override
   String get wait => 'Aguarde...';
 
+  @override
+  String get surveys => 'Enquetes';
+
 }
