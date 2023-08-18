@@ -2,46 +2,71 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:faker/faker.dart';
 
-import 'package:clean_arch/data/http/http_client.dart';
-import 'package:clean_arch/data/cache/cache.dart';
+import 'package:clean_arch/main/decorators/decorators.dart';
+import 'package:clean_arch/data/http/http.dart';
 
-import '../../data/mocks/fetch_secure_cache_storage_mock.dart';
-
-class AuthorizeHttpClientDecorator implements HttpClient {
-  AuthorizeHttpClientDecorator({required this.fetchSecureCacheStorage});
-
-  final FetchSecureCacheStorage fetchSecureCacheStorage;
-
-  @override
-  Future request({required String url, required String? method, Map<String, dynamic>? body, Map<String, dynamic>? headers}) async {
-    await fetchSecureCacheStorage.fetchSecure('token');
-    return null;
-  }
-
-}
+import '../../data/mocks/mocks.dart';
 
 void main() {
 
   late AuthorizeHttpClientDecorator systemUnderTest;
   late FetchSecureCacheStorageMock fetchSecureCacheStorage;
+  late HttpClientMock httpClient;
   late String url;
-  late Uri uri;
+  late String method;
+  late Map<String, dynamic> body;
+  late String token;
 
   setUp(() {
+    method = faker.randomGenerator.string(12);
+    body = { 'body_key' : 'body_value' };
+    token = faker.guid.guid();
+    url = faker.internet.httpUrl();
     fetchSecureCacheStorage = FetchSecureCacheStorageMock();
-    systemUnderTest = AuthorizeHttpClientDecorator(fetchSecureCacheStorage: fetchSecureCacheStorage);
-  });
-
-  setUpAll(() {
-    url = faker.internet.uri('http');
-    uri = Uri.parse(url);
-    registerFallbackValue(uri);
+    httpClient = HttpClientMock();
+    systemUnderTest = AuthorizeHttpClientDecorator(
+      fetchSecureCacheStorage: fetchSecureCacheStorage,
+      decoratee: httpClient,
+    );
+    httpClient.mockRequest(null);
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
-
-    await systemUnderTest.request(url: url, method: 'get');
+    await systemUnderTest.request(url: url, method: method, body: body);
 
     verify(() => fetchSecureCacheStorage.fetchSecure('token')).called(1);
+  });
+
+  test('Should call decoratee with access token on header', () async {
+    fetchSecureCacheStorage.mockFetchSecure(token: token);
+    await systemUnderTest.request(url: url, method: method, body: body);
+
+    verify(() => httpClient.request(url: url, method: method, body: body, headers: { 'x-access-token': token })).called(1);
+
+    await systemUnderTest.request(url: url, method: method, body: body, headers: { 'header_key' : 'header_value' });
+
+    verify(() => httpClient.request(url: url, method: method, body: body, headers: { 'header_key' : 'header_value', 'x-access-token': token })).called(1);
+  });
+
+  test('Should return same result as decoratee', () async {
+    final response = await systemUnderTest.request(url: url, method: method, body: body);
+
+    expect(response, null);
+  });
+
+  test('Should throw ForbiddenError if FetchSecureCacheStorage throws', () async {
+    fetchSecureCacheStorage.mockFetchSecureError();
+
+    final future = systemUnderTest.request(url: url, method: method, body: body);
+
+    expect(future, throwsA(HttpError.forbidden));
+  });
+
+  test('Should rethrow if decoratee throws', () async {
+    httpClient.mockRequestError(HttpError.badRequest);
+
+    final future = systemUnderTest.request(url: url, method: method, body: body);
+
+    expect(future, throwsA(HttpError.badRequest));
   });
 }

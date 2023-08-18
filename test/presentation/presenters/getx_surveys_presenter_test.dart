@@ -48,7 +48,7 @@ void main() {
   test('Should emit correct events on failure', () async {
     loadSurveys.mockLoadError(UiError.unexpected.description);
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
-    systemUnderTest.surveysStream.listen(null, onError: expectAsync1((error) => expect(error, UiError.unexpected.description)));
+    systemUnderTest.surveysStream.listen(null, onError: expectAsync2((error, stackTrace) => expect(error, UiError.unexpected.description)));
 
     await systemUnderTest.loadData();
   });
