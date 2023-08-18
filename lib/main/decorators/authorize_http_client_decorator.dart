@@ -10,11 +10,10 @@ class AuthorizeHttpClientDecorator implements HttpClient {
   @override
   Future<dynamic> request({required String url, required String? method, Map<String, dynamic>? body, Map<String, dynamic>? headers}) async {
     try {
+      Map<String, dynamic>? authorizedHeader;
       final accessToken = await fetchSecureCacheStorage.fetchSecure('token');
-      if (accessToken != null && accessToken.isNotEmpty) {
-        headers = headers ?? {}..addAll({ 'x-access-token' : accessToken });
-      }
-      return await decoratee.request(url: url, method: method, body: body, headers: headers);
+      authorizedHeader = headers ?? {}..addAll({ 'x-access-token' : accessToken });
+      return await decoratee.request(url: url, method: method, body: body, headers: authorizedHeader);
     } on HttpError {
       rethrow;
     } catch (error) {

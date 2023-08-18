@@ -5,7 +5,7 @@ import 'package:clean_arch/main/factories/factories.dart';
 
 LoadSurveys remoteLoadSurveysFactory() {
   return RemoteLoadSurveys(
-    httpClient: httpClientFactory(), 
+    httpClient: authorizeHttpClientDecoratorFactory(), 
     url: apiUrlFactory('surveys'),
   );
 }
