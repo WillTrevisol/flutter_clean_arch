@@ -16,8 +16,8 @@ class LocalLoadSurveys implements LoadSurveys {
 
   @override
   Future<List<Survey>> load() async {
-    final surveys = await fetchCacheStorage.fetch('surveys');
     try {
+      final surveys = await fetchCacheStorage.fetch('surveys');
       if (surveys == null || surveys?.isEmpty) {
         throw DomainError.unexpected;
       }
@@ -41,6 +41,7 @@ class FetchCacheStorageMock extends Mock implements FetchCacheStorage {
 
   When mockFetchCall() => when(() => fetch(any()));
   void mockFetch({dynamic surveys}) => mockFetchCall().thenAnswer((_) async => surveys);
+  void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
 }
 
@@ -96,6 +97,13 @@ void main() {
 
   test('Should throw UnexpectedError if cache is incomplete', () async {
     fetchCacheStorage.mockFetch(surveys: CacheFactory.incompleteSurveysList());
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if cache is incomplete', () async {
+    fetchCacheStorage.mockFetchError();
     final future = systemUnderTest.load();
 
     expect(future, throwsA(DomainError.unexpected));
