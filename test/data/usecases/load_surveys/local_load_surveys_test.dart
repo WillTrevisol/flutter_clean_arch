@@ -101,6 +101,13 @@ void main() {
 
       verify(() => cacheStorage.delete('surveys')).called(1);
     });
+
+    test('Should delete if fetch throws', () async {
+      cacheStorage.mockFetchError();
+      await systemUnderTest.validate();
+
+      verify(() => cacheStorage.delete('surveys')).called(1);
+    });
   });
 }
  
