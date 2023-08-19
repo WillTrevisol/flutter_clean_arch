@@ -17,10 +17,14 @@ class LocalLoadSurveys implements LoadSurveys {
   @override
   Future<List<Survey>> load() async {
     final surveys = await fetchCacheStorage.fetch('surveys');
-    if (surveys == null || surveys?.isEmpty) {
+    try {
+      if (surveys == null || surveys?.isEmpty) {
+        throw DomainError.unexpected;
+      }
+      return surveys.map<Survey>((survey) => LocalSurvey.fromMap(survey).toDomainEntity()).toList();
+    } catch (error) {
       throw DomainError.unexpected;
     }
-    return surveys.map<Survey>((survey) => LocalSurvey.fromMap(survey).toDomainEntity()).toList();
   }
 
 }
@@ -78,6 +82,13 @@ void main() {
 
   test('Should throw UnexpectedError if cache is null', () async {
     fetchCacheStorage.mockFetch(surveys: null);
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if cache is invalid', () async {
+    fetchCacheStorage.mockFetch(surveys: CacheFactory.invalidSurveysList());
     final future = systemUnderTest.load();
 
     expect(future, throwsA(DomainError.unexpected));
