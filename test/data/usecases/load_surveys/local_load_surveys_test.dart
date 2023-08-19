@@ -94,6 +94,13 @@ void main() {
 
       verify(() => cacheStorage.delete('surveys')).called(1);
     });
+
+    test('Should delete cache if is incomplete', () async {
+      cacheStorage.mockFetch(surveys: CacheFactory.incompleteSurveysList());
+      await systemUnderTest.validate();
+
+      verify(() => cacheStorage.delete('surveys')).called(1);
+    });
   });
 }
  
