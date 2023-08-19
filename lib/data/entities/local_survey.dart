@@ -1,5 +1,4 @@
 import 'package:clean_arch/domain/entities/entities.dart';
-import 'package:clean_arch/data/http/http.dart';
 
 class LocalSurvey {
   final String id;
@@ -16,7 +15,7 @@ class LocalSurvey {
 
   factory LocalSurvey.fromMap(Map<String, dynamic> data) {
     if (!data.keys.toSet().containsAll(['id', 'question', 'date', 'didAnswer'])) {
-      throw HttpError.invalidData;
+      throw Exception();
     }
 
     return LocalSurvey(

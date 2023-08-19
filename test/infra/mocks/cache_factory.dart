@@ -19,4 +19,9 @@ class CacheFactory {
     'date': 'invalid date',
     'didAnswer': false
   }];
+
+  static incompleteSurveysList() => [{
+    'date': '2023-08-18T00:00:00Z',
+    'didAnswer': false
+  }];
 }

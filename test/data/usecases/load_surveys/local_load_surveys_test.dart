@@ -93,5 +93,12 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpectedError if cache is incomplete', () async {
+    fetchCacheStorage.mockFetch(surveys: CacheFactory.incompleteSurveysList());
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
  
