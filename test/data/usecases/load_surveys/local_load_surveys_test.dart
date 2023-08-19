@@ -9,7 +9,7 @@ import '../../../infra/mocks/mocks.dart';
 import '../../mocks/mocks.dart';
 
 void main() {
-  group('load()', () {
+  group('load', () {
     late LocalLoadSurveys systemUnderTest;
     late CacheStorageMock cacheStorage;
     late List<Map> cacheSurveysMock;
@@ -68,6 +68,31 @@ void main() {
       final future = systemUnderTest.load();
 
       expect(future, throwsA(DomainError.unexpected));
+    });
+  });
+
+  group('validate', () {
+    late LocalLoadSurveys systemUnderTest;
+    late CacheStorageMock cacheStorage;
+    late List<Map> cacheSurveysMock;
+
+    setUp(() {
+      cacheStorage = CacheStorageMock();
+      systemUnderTest = LocalLoadSurveys(cacheStorage: cacheStorage);
+      cacheSurveysMock = CacheFactory.surveysList();
+      cacheStorage.mockFetch(surveys: cacheSurveysMock);
+    });
+    test('Should call CacheStorage with correct key', () async {
+      await systemUnderTest.validate();
+
+      verify(() => cacheStorage.fetch('surveys')).called(1);
+    });
+
+    test('Should delete cache if is invalid', () async {
+      cacheStorage.mockFetch(surveys: CacheFactory.invalidSurveysList());
+      await systemUnderTest.validate();
+
+      verify(() => cacheStorage.delete('surveys')).called(1);
     });
   });
 }

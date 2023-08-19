@@ -22,4 +22,13 @@ class LocalLoadSurveys implements LoadSurveys {
       throw DomainError.unexpected;
     }
   }
+
+  Future<void> validate() async {
+    try {
+      final surveys = await cacheStorage.fetch('surveys');
+      surveys.map<Survey>((survey) => LocalSurvey.fromMap(survey).toDomainEntity()).toList();
+    } catch (error) {
+      await cacheStorage.delete('surveys');
+    }
+  }
 }
