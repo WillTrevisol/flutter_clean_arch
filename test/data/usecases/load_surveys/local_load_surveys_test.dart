@@ -9,65 +9,66 @@ import '../../../infra/mocks/mocks.dart';
 import '../../mocks/mocks.dart';
 
 void main() {
-  late LocalLoadSurveys systemUnderTest;
-  late FetchCacheStorageMock fetchCacheStorage;
-  late List<Map> cacheSurveysMock;
+  group('load()', () {
+    late LocalLoadSurveys systemUnderTest;
+    late CacheStorageMock cacheStorage;
+    late List<Map> cacheSurveysMock;
 
-  setUp(() {
-    fetchCacheStorage = FetchCacheStorageMock();
-    systemUnderTest = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
-    cacheSurveysMock = CacheFactory.surveysList();
-    fetchCacheStorage.mockFetch(surveys: cacheSurveysMock);
-  });
+    setUp(() {
+      cacheStorage = CacheStorageMock();
+      systemUnderTest = LocalLoadSurveys(cacheStorage: cacheStorage);
+      cacheSurveysMock = CacheFactory.surveysList();
+      cacheStorage.mockFetch(surveys: cacheSurveysMock);
+    });
+    test('Should call cacheStorage with correct key', () async {
+      await systemUnderTest.load();
 
-  test('Should call FetchCacheStorage with correct key', () async {
-    await systemUnderTest.load();
+      verify(() => cacheStorage.fetch('surveys')).called(1);
+    });
 
-    verify(() => fetchCacheStorage.fetch('surveys')).called(1);
-  });
+    test('Should return a list of surveys on success', () async {
+      final surveys = await systemUnderTest.load();
 
-  test('Should return a list of surveys on success', () async {
-    final surveys = await systemUnderTest.load();
+      expect(surveys, [
+        Survey(id: cacheSurveysMock[0]['id'], question: cacheSurveysMock[0]['question'], date: DateTime.utc(2023, 08, 18), didAnswer: cacheSurveysMock[0]['didAnswer']),
+        Survey(id: cacheSurveysMock[1]['id'], question: cacheSurveysMock[1]['question'], date: DateTime.utc(2022, 08, 17), didAnswer: cacheSurveysMock[1]['didAnswer']),
+      ]);
+    });
 
-    expect(surveys, [
-      Survey(id: cacheSurveysMock[0]['id'], question: cacheSurveysMock[0]['question'], date: DateTime.utc(2023, 08, 18), didAnswer: cacheSurveysMock[0]['didAnswer']),
-      Survey(id: cacheSurveysMock[1]['id'], question: cacheSurveysMock[1]['question'], date: DateTime.utc(2022, 08, 17), didAnswer: cacheSurveysMock[1]['didAnswer']),
-    ]);
-  });
+    test('Should throw UnexpectedError if cache is empty', () async {
+      cacheStorage.mockFetch(surveys: []);
+      final future = systemUnderTest.load();
 
-  test('Should throw UnexpectedError if cache is empty', () async {
-    fetchCacheStorage.mockFetch(surveys: []);
-    final future = systemUnderTest.load();
+      expect(future, throwsA(DomainError.unexpected));
+    });
 
-    expect(future, throwsA(DomainError.unexpected));
-  });
+    test('Should throw UnexpectedError if cache is null', () async {
+      cacheStorage.mockFetch(surveys: null);
+      final future = systemUnderTest.load();
 
-  test('Should throw UnexpectedError if cache is null', () async {
-    fetchCacheStorage.mockFetch(surveys: null);
-    final future = systemUnderTest.load();
+      expect(future, throwsA(DomainError.unexpected));
+    });
 
-    expect(future, throwsA(DomainError.unexpected));
-  });
+    test('Should throw UnexpectedError if cache is invalid', () async {
+      cacheStorage.mockFetch(surveys: CacheFactory.invalidSurveysList());
+      final future = systemUnderTest.load();
 
-  test('Should throw UnexpectedError if cache is invalid', () async {
-    fetchCacheStorage.mockFetch(surveys: CacheFactory.invalidSurveysList());
-    final future = systemUnderTest.load();
+      expect(future, throwsA(DomainError.unexpected));
+    });
 
-    expect(future, throwsA(DomainError.unexpected));
-  });
+    test('Should throw UnexpectedError if cache is incomplete', () async {
+      cacheStorage.mockFetch(surveys: CacheFactory.incompleteSurveysList());
+      final future = systemUnderTest.load();
 
-  test('Should throw UnexpectedError if cache is incomplete', () async {
-    fetchCacheStorage.mockFetch(surveys: CacheFactory.incompleteSurveysList());
-    final future = systemUnderTest.load();
+      expect(future, throwsA(DomainError.unexpected));
+    });
 
-    expect(future, throwsA(DomainError.unexpected));
-  });
+    test('Should throw UnexpectedError if cache is incomplete', () async {
+      cacheStorage.mockFetchError();
+      final future = systemUnderTest.load();
 
-  test('Should throw UnexpectedError if cache is incomplete', () async {
-    fetchCacheStorage.mockFetchError();
-    final future = systemUnderTest.load();
-
-    expect(future, throwsA(DomainError.unexpected));
+      expect(future, throwsA(DomainError.unexpected));
+    });
   });
 }
  

@@ -2,9 +2,9 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/data/cache/cache.dart';
 
-class FetchCacheStorageMock extends Mock implements FetchCacheStorage {
+class CacheStorageMock extends Mock implements CacheStorage {
 
-  FetchCacheStorageMock() {
+  CacheStorageMock() {
     mockFetch();
   }
 
