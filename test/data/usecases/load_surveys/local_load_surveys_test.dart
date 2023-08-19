@@ -3,58 +3,19 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/domain/entities/survey.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
-import 'package:clean_arch/domain/usecases/usecases.dart';
-import 'package:clean_arch/data/entities/entities.dart';
+import 'package:clean_arch/data/usecases/usecases.dart';
 
-import '../../../domain/mocks/mocks.dart';
 import '../../../infra/mocks/mocks.dart';
-
-class LocalLoadSurveys implements LoadSurveys {
-  LocalLoadSurveys({required this.fetchCacheStorage});
-
-  final FetchCacheStorage fetchCacheStorage;
-
-  @override
-  Future<List<Survey>> load() async {
-    try {
-      final surveys = await fetchCacheStorage.fetch('surveys');
-      if (surveys == null || surveys?.isEmpty) {
-        throw DomainError.unexpected;
-      }
-      return surveys.map<Survey>((survey) => LocalSurvey.fromMap(survey).toDomainEntity()).toList();
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-
-}
-
-abstract class FetchCacheStorage {
-  Future<dynamic> fetch(String key);
-}
-
-class FetchCacheStorageMock extends Mock implements FetchCacheStorage {
-
-  FetchCacheStorageMock() {
-    mockFetch();
-  }
-
-  When mockFetchCall() => when(() => fetch(any()));
-  void mockFetch({dynamic surveys}) => mockFetchCall().thenAnswer((_) async => surveys);
-  void mockFetchError() => mockFetchCall().thenThrow(Exception());
-
-}
+import '../../mocks/mocks.dart';
 
 void main() {
   late LocalLoadSurveys systemUnderTest;
   late FetchCacheStorageMock fetchCacheStorage;
-  late List<Survey> surveysMock;
   late List<Map> cacheSurveysMock;
 
   setUp(() {
     fetchCacheStorage = FetchCacheStorageMock();
     systemUnderTest = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
-    surveysMock = EntityFactory.listSurveys();
     cacheSurveysMock = CacheFactory.surveysList();
     fetchCacheStorage.mockFetch(surveys: cacheSurveysMock);
   });
