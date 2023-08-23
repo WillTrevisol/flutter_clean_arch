@@ -17,7 +17,7 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
   Future<List<Survey>> load() async {
     final surveys = await remote.load();
     await local.save(surveys);
-    return [];
+    return surveys;
   }
 
 }
@@ -40,14 +40,14 @@ void main() {
   late RemoteLoadSurveysWithLocalFallback systemUnderTest;
   late RemoteLoadSurveysMock remoteLoadSurveys;
   late LocalLoadSurveysMock localLoadSurveys;
-  late List<Survey> surveys;
+  late List<Survey> remoteSurveys;
 
   setUp(() {
-    surveys = EntityFactory.listSurveys();
+    remoteSurveys = EntityFactory.listSurveys();
     remoteLoadSurveys = RemoteLoadSurveysMock();
     localLoadSurveys = LocalLoadSurveysMock();
     systemUnderTest = RemoteLoadSurveysWithLocalFallback(remote: remoteLoadSurveys, local: localLoadSurveys);
-    remoteLoadSurveys.mockLoad(surveys);
+    remoteLoadSurveys.mockLoad(remoteSurveys);
   });
 
   test('Should call remote load', () async {
@@ -59,6 +59,12 @@ void main() {
   test('Should call local save with remote data', () async {
     await systemUnderTest.load();
 
-    verify(() => localLoadSurveys.save(surveys)).called(1);
+    verify(() => localLoadSurveys.save(remoteSurveys)).called(1);
+  });
+
+  test('Should return remote data', () async {
+    final surveys = await systemUnderTest.load();
+
+    expect(surveys, remoteSurveys);
   });
 }
