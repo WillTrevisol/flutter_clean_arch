@@ -19,5 +19,6 @@ class CacheStorageMock extends Mock implements CacheStorage {
 
   When mockSaveCall() => when(() => save(key: any(named: 'key'), value: any(named: 'value')));
   void mockSave() => mockSaveCall().thenAnswer((_) async => _);
+  void mockSaveError() => mockSaveCall().thenThrow(Exception());
 
 }

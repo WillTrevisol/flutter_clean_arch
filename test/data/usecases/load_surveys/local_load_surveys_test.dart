@@ -138,6 +138,13 @@ void main() {
 
       verify(() => cacheStorage.save(key: 'surveys', value: surveysMapList)).called(1);
     });
+
+    test('Should throw UnexpectedError if save throws', () async {
+      cacheStorage.mockSaveError();
+      final future = systemUnderTest.save(surveys);
+
+      expect(future, throwsA(DomainError.unexpected));
+    });
   });
 }
  
