@@ -6,7 +6,7 @@ class HttpResponse {
 
   static final Map<int, dynamic> _adapter = {
     200: (data) => data.isNotEmpty ? jsonDecode(data) : null,
-    204: null,
+    204: (_) => null,
     400: (_) => throw HttpError.badRequest,
     401: (_) => throw HttpError.unauthorized,
     403: (_) => throw HttpError.forbidden,
