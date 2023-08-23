@@ -16,9 +16,17 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
 
   @override
   Future<List<Survey>> load() async {
-    final surveys = await remote.load();
-    await local.save(surveys);
-    return surveys;
+    try {
+      final surveys = await remote.load();
+      await local.save(surveys);
+      return surveys;
+    } catch (error) {
+      if (error == DomainError.accessDenied) {
+        rethrow;
+      }
+      await local.validate();
+      return await local.load();
+    }
   }
 
 }
@@ -33,9 +41,17 @@ class RemoteLoadSurveysMock extends Mock implements RemoteLoadSurveys {
 class LocalLoadSurveysMock extends Mock implements LocalLoadSurveys {
   LocalLoadSurveysMock() {
     mockSave();
+    mockValidate();
   }
+
   When mockSaveCall() => when(() => save(any()));
   void mockSave() => mockSaveCall().thenAnswer((_) async => _);
+
+  When mockValidateCall() => when(() => validate());
+  void mockValidate() => mockValidateCall().thenAnswer((_) async => _);
+
+  When mockLoadCall() => when(() => load());
+  void mockLoad(List<Survey> surveys) => mockLoadCall().thenAnswer((_) async => surveys);
 }
 
 void main() {
@@ -50,6 +66,7 @@ void main() {
     localLoadSurveys = LocalLoadSurveysMock();
     systemUnderTest = RemoteLoadSurveysWithLocalFallback(remote: remoteLoadSurveys, local: localLoadSurveys);
     remoteLoadSurveys.mockLoad(remoteSurveys);
+    localLoadSurveys.mockLoad(remoteSurveys);
   });
 
   test('Should call remote load', () async {
@@ -67,7 +84,7 @@ void main() {
   test('Should return remote data', () async {
     final surveys = await systemUnderTest.load();
 
-    expect(surveys, remoteSurveys);
+    expect(surveys, remoteSurveys); 
   });
 
   test('Should rethrow if remote load throws AccessDeniedError', () async {
@@ -75,5 +92,13 @@ void main() {
     final future = systemUnderTest.load();
 
     expect(future, throwsA(DomainError.accessDenied));
+  });
+
+  test('Should call local fetch on remote error', () async {
+    remoteLoadSurveys.mockLoadError(DomainError.unexpected);
+    await systemUnderTest.load();
+
+    verify(() => localLoadSurveys.validate()).called(1);
+    verify(() => localLoadSurveys.load()).called(1);
   });
 }
