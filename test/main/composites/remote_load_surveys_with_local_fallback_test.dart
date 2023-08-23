@@ -1,59 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:clean_arch/data/usecases/usecases.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/domain/entities/survey.dart';
-import 'package:clean_arch/domain/usecases/usecases.dart';
+import 'package:clean_arch/main/composites/composites.dart';
 
+import '../../data/mocks/mocks.dart';
 import '../../domain/mocks/mocks.dart';
-
-class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
-  RemoteLoadSurveysWithLocalFallback({required this.remote, required this.local});
-
-  final RemoteLoadSurveys remote;
-  final LocalLoadSurveys local;
-
-  @override
-  Future<List<Survey>> load() async {
-    try {
-      final surveys = await remote.load();
-      await local.save(surveys);
-      return surveys;
-    } catch (error) {
-      if (error == DomainError.accessDenied) {
-        rethrow;
-      }
-      await local.validate();
-      return await local.load();
-    }
-  }
-
-}
-
-class RemoteLoadSurveysMock extends Mock implements RemoteLoadSurveys {
-
-  When mockLoadCall() => when(() => load());
-  void mockLoad(List<Survey> surveys) => mockLoadCall().thenAnswer((_) async => surveys);
-  void mockLoadError(DomainError error) => mockLoadCall().thenThrow(error);
-}
-
-class LocalLoadSurveysMock extends Mock implements LocalLoadSurveys {
-  LocalLoadSurveysMock() {
-    mockSave();
-    mockValidate();
-  }
-
-  When mockSaveCall() => when(() => save(any()));
-  void mockSave() => mockSaveCall().thenAnswer((_) async => _);
-
-  When mockValidateCall() => when(() => validate());
-  void mockValidate() => mockValidateCall().thenAnswer((_) async => _);
-
-  When mockLoadCall() => when(() => load());
-  void mockLoad(List<Survey> surveys) => mockLoadCall().thenAnswer((_) async => surveys);
-  void mockLoadError() => mockLoadCall().thenThrow(DomainError.unexpected);
-}
 
 void main() {
   late RemoteLoadSurveysWithLocalFallback systemUnderTest;
