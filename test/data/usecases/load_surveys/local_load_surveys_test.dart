@@ -5,6 +5,7 @@ import 'package:clean_arch/domain/entities/survey.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/data/usecases/usecases.dart';
 
+import '../../../domain/mocks/mocks.dart';
 import '../../../infra/mocks/mocks.dart';
 import '../../mocks/mocks.dart';
 
@@ -107,6 +108,35 @@ void main() {
       await systemUnderTest.validate();
 
       verify(() => cacheStorage.delete('surveys')).called(1);
+    });
+  });
+
+  group('save', () {
+    late LocalLoadSurveys systemUnderTest;
+    late CacheStorageMock cacheStorage;
+    late List<Survey> surveys;
+
+    setUp(() {
+      cacheStorage = CacheStorageMock();
+      systemUnderTest = LocalLoadSurveys(cacheStorage: cacheStorage);
+      surveys = EntityFactory.listSurveys();
+    });
+
+    test('Should call CacheStorage with correct key', () async {
+      final surveysMapList = [{
+        'id': surveys[0].id,
+        'question': surveys[0].question,
+        'date': '2023-08-18T00:00:00.000',
+        'didAnswer': surveys[0].didAnswer,
+      }, {
+        'id': surveys[1].id,
+        'question': surveys[1].question,
+        'date': '2023-08-17T00:00:00.000',
+        'didAnswer': surveys[1].didAnswer,
+      }];
+      await systemUnderTest.save(surveys);
+
+      verify(() => cacheStorage.save(key: 'surveys', value: surveysMapList)).called(1);
     });
   });
 }

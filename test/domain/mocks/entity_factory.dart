@@ -10,14 +10,14 @@ class EntityFactory {
     Survey(
       id: faker.guid.guid(),
       question: faker.internet.random.string(50),
-      date: DateTime(2023, 08, 16),
-      didAnswer: true,
+      date: DateTime(2023, 08, 18),
+      didAnswer: false,
     ),
     Survey(
       id: faker.guid.guid(),
       question: faker.internet.random.string(50),
-      date: DateTime(2023, 08, 10),
-      didAnswer: false,
+      date: DateTime(2023, 08, 17),
+      didAnswer: true,
     ),
   ];
 

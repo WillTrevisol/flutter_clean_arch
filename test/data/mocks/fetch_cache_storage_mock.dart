@@ -7,6 +7,7 @@ class CacheStorageMock extends Mock implements CacheStorage {
   CacheStorageMock() {
     mockFetch();
     mockDelete();
+    mockSave();
   }
 
   When mockFetchCall() => when(() => fetch(any()));
@@ -15,5 +16,8 @@ class CacheStorageMock extends Mock implements CacheStorage {
 
   When mockDeleteCall() => when(() => delete(any()));
   void mockDelete() => mockDeleteCall().thenAnswer((_) async => _);
+
+  When mockSaveCall() => when(() => save(key: any(named: 'key'), value: any(named: 'value')));
+  void mockSave() => mockSaveCall().thenAnswer((_) async => _);
 
 }

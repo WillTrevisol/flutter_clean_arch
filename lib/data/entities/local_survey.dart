@@ -26,6 +26,20 @@ class LocalSurvey {
     );
   }
 
+  factory LocalSurvey.fromEntity(Survey survey) => LocalSurvey(
+    id: survey.id,
+    question: survey.question,
+    date: survey.date,
+    didAnswer: survey.didAnswer,
+  );
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'question': question,
+    'date': date.toIso8601String(),
+    'didAnswer': didAnswer,
+  };
+
   Survey toDomainEntity() => Survey(
     id: id,
     question: question,
