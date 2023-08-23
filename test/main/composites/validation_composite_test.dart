@@ -1,10 +1,10 @@
-import 'package:clean_arch/presentation/protocols/protocols.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'package:clean_arch/validation/validators/validators.dart';
+import 'package:clean_arch/presentation/protocols/protocols.dart';
+import 'package:clean_arch/main/composites/composites.dart';
 
-import '../mocks/field_validation_mock.dart';
+import '../../validation/mocks/field_validation_mock.dart';
 
 
 void main() {

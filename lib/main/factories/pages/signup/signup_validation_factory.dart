@@ -1,6 +1,6 @@
 import 'package:clean_arch/presentation/protocols/protocols.dart';
 import 'package:clean_arch/validation/protocols/field_validation.dart';
-import 'package:clean_arch/validation/validators/validators.dart';
+import 'package:clean_arch/main/composites/composites.dart';
 import 'package:clean_arch/main/builders/builders.dart';
 
 Validation signUpValidationFactory() {
