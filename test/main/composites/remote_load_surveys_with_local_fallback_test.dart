@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/data/usecases/usecases.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/domain/entities/survey.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 
@@ -26,6 +27,7 @@ class RemoteLoadSurveysMock extends Mock implements RemoteLoadSurveys {
 
   When mockLoadCall() => when(() => load());
   void mockLoad(List<Survey> surveys) => mockLoadCall().thenAnswer((_) async => surveys);
+  void mockLoadError(DomainError error) => mockLoadCall().thenThrow(error);
 }
 
 class LocalLoadSurveysMock extends Mock implements LocalLoadSurveys {
@@ -66,5 +68,12 @@ void main() {
     final surveys = await systemUnderTest.load();
 
     expect(surveys, remoteSurveys);
+  });
+
+  test('Should rethrow if remote load throws AccessDeniedError', () async {
+    remoteLoadSurveys.mockLoadError(DomainError.accessDenied);
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.accessDenied));
   });
 }
