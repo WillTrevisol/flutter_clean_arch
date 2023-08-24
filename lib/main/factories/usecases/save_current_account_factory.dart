@@ -5,6 +5,6 @@ import 'package:clean_arch/main/factories/factories.dart';
 
 SaveCurrentAccount saveLocalCurrentAccountFactory() {
   return LocalSaveCurrentAccount(
-    saveSecureCacheStorage: localStorageAdapterFactory()
+    saveSecureCacheStorage: secureLocalStorageAdapterFactory()
   );
 }

@@ -6,7 +6,7 @@ import 'package:clean_arch/main/factories/factories.dart';
 
 HttpClient authorizeHttpClientDecoratorFactory() {
   return AuthorizeHttpClientDecorator(
-    fetchSecureCacheStorage: localStorageAdapterFactory(),
+    fetchSecureCacheStorage: secureLocalStorageAdapterFactory(),
     decoratee: httpClientFactory(),
   );
 }

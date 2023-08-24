@@ -9,3 +9,9 @@ LoadSurveys remoteLoadSurveysFactory() {
     url: apiUrlFactory('surveys'),
   );
 }
+
+LoadSurveys localLoadSurveysFactory() {
+  return LocalLoadSurveys(
+    cacheStorage: localStorageAdapterFactory(),
+  );
+}
