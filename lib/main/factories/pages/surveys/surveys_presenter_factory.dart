@@ -4,6 +4,6 @@ import 'package:clean_arch/ui/pages/pages.dart';
 
 SurveysPresenter getxSurveysPresenterFactory() {
   return GetxSurveysPresenter(
-    loadSurveys: remoteLoadSurveysFactory(),
+    loadSurveys: remoteLoadSurveysWithLocalFallbackFactory(),
   );
 }

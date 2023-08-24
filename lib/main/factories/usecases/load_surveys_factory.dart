@@ -1,17 +1,25 @@
 import 'package:clean_arch/data/usecases/usecases.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 
+import 'package:clean_arch/main/composites/composites.dart';
 import 'package:clean_arch/main/factories/factories.dart';
 
-LoadSurveys remoteLoadSurveysFactory() {
+RemoteLoadSurveys remoteLoadSurveysFactory() {
   return RemoteLoadSurveys(
     httpClient: authorizeHttpClientDecoratorFactory(), 
     url: apiUrlFactory('surveys'),
   );
 }
 
-LoadSurveys localLoadSurveysFactory() {
+LocalLoadSurveys localLoadSurveysFactory() {
   return LocalLoadSurveys(
     cacheStorage: localStorageAdapterFactory(),
+  );
+}
+
+LoadSurveys remoteLoadSurveysWithLocalFallbackFactory() {
+  return RemoteLoadSurveysWithLocalFallback(
+    remote: remoteLoadSurveysFactory(),
+    local: localLoadSurveysFactory(),
   );
 }
