@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -17,7 +18,7 @@ void main() {
         GetPage(name: '/survey_result/:survey_id', page: () => SurveyResultPage(presenter: presenter)),
       ],
     );
-    mockNetworkImagesFor(() async => await tester.pumpWidget(surveysPage));
+    await mockNetworkImagesFor(() async => await tester.pumpWidget(surveysPage));
   }
 
   tearDown(() => presenter.dispose());
@@ -26,5 +27,19 @@ void main() {
     await loadPage(widgetTester);
 
     verify(()=> presenter.loadData()).called(1);
+  });
+
+  testWidgets('Should handle loading correctly', (WidgetTester widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitIsLoading(true);
+    await widgetTester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    presenter.emitIsLoading(false);
+    await widgetTester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }

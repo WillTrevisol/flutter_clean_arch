@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
+import 'package:clean_arch/ui/components/components.dart';
 
 class SurveyResultPage extends StatelessWidget {
   const SurveyResultPage({super.key, required this.presenter});
@@ -16,6 +17,13 @@ class SurveyResultPage extends StatelessWidget {
       ),
       body: Builder(
         builder: (context) {
+          presenter.isLoadingStream.listen((isLoading) {
+            if (isLoading) {
+              showLoading(context);
+            } else {
+              hideLoading(context);
+            }
+          });
           presenter.loadData();
           return ListView.builder(
             itemCount: 5,

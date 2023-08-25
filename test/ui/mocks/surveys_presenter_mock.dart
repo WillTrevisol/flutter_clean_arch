@@ -24,5 +24,6 @@ class SurveysPresenterMock extends Mock implements SurveysPresenter {
   @override
   dispose() {
     isLoadingController.close();
+    surveysController.close();
   }
 }
