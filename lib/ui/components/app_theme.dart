@@ -4,7 +4,10 @@ ThemeData appThemeData() {
   const primaryColor = Color.fromRGBO(136, 14, 79, 1);
   const primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
   const primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
+  const secondaryColor = Color.fromRGBO(0, 77, 64, 1);
   const secondaryColorDark = Color.fromRGBO(0, 37, 26, 1);
+  final disabledColor = Colors.grey[400];
+  const dividerColor = Colors.grey;
   
   return ThemeData(
     useMaterial3: true,
@@ -12,6 +15,9 @@ ThemeData appThemeData() {
     primaryColorLight: primaryColorLight,
     primaryColorDark: primaryColorDark,
     secondaryHeaderColor: secondaryColorDark,
+    highlightColor: secondaryColor,
+    disabledColor: disabledColor,
+    dividerColor: dividerColor,
     primarySwatch: Colors.pink,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
