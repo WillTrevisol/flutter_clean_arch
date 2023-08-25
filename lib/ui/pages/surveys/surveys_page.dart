@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:carousel_slider/carousel_slider.dart';
-
 import 'package:clean_arch/ui/pages/surveys/components/components.dart';
 import 'package:clean_arch/ui/components/components.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
@@ -37,16 +35,7 @@ class SurveysPage extends StatelessWidget {
               }
 
               if (snapshot.hasData) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      enlargeCenterPage: true,
-                      aspectRatio: 1
-                    ),
-                    items: snapshot.data?.map((viewEntity) => SurveyItem(surveyEntity: viewEntity)).toList(),
-                  ),
-                );
+                return SurveyItems(viewEntities: snapshot.data as List<SurveyViewEntity>);
               }
 
               return const SizedBox(height: 0);
