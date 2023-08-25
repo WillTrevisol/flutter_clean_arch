@@ -1,9 +1,5 @@
-export 'login/login_page.dart';
-export 'login/login_presenter.dart';
-export 'splash/splash_page.dart';
-export 'splash/splash_presenter.dart';
-export 'signup/signup_page.dart';
-export 'signup/signup_presenter.dart';
-export 'surveys/surveys_page.dart';
-export 'surveys/surveys_presenter.dart';
-export 'surveys/survey_viewentity.dart';
+export 'login/login.dart';
+export 'splash/splash.dart';
+export 'signup/signup.dart';
+export 'surveys/surveys.dart';
+export 'survey_result/survey_result.dart';

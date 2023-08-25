@@ -27,6 +27,7 @@ class App extends StatelessWidget {
         GetPage(name: '/login', page: loginPageFactory, transition: Transition.fadeIn),
         GetPage(name: '/signup', page: signUpPageFactory),
         GetPage(name: '/surveys', page: surveysPageFactory, transition: Transition.fadeIn),
+        GetPage(name: '/survey_result/:survey_id', page: surveyResultPageFactory),
       ],
     );
   }
