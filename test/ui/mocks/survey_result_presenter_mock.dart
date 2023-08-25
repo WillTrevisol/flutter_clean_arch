@@ -18,6 +18,7 @@ class SurveyResultPresenterMock extends Mock implements SurveyResultPresenter {
   final surveyResultController = StreamController<SurveyResultViewEntity>();
 
   void emitIsLoading(bool value) => isLoadingController.add(value);
+  void emitSurveyResult(SurveyResultViewEntity data) => surveyResultController.add(data);
   void emitSurveyResultError(String error) => surveyResultController.addError(error);
 
   @override

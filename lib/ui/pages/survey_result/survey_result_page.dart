@@ -26,7 +26,7 @@ class SurveyResultPage extends StatelessWidget {
           });
           presenter.loadData();
 
-          return StreamBuilder(
+          return StreamBuilder<SurveyResultViewEntity>(
             stream: presenter.surveyResultStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -34,7 +34,7 @@ class SurveyResultPage extends StatelessWidget {
               }
 
               if (snapshot.hasData) {
-                return const SurveyResult();
+                return SurveyResult(viewEntity: snapshot.data!);
               }
               return const SizedBox(height: 0);
             },

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:clean_arch/ui/pages/pages.dart';
+
 class SurveyResult extends StatelessWidget {
-  const SurveyResult({super.key});
+  const SurveyResult({super.key, required this.viewEntity});
+
+  final SurveyResultViewEntity viewEntity;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 5,
+      itemCount: viewEntity.answers.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
           return Container(
@@ -14,9 +18,11 @@ class SurveyResult extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).disabledColor.withAlpha(90),
             ),
-            child: const Text('Qual é seu framework web favorito'),
+            child: Text(viewEntity.question),
           );
         }
+
+        final answer = viewEntity.answers[index - 1];
   
         return Column(
           children: <Widget> [
@@ -28,36 +34,31 @@ class SurveyResult extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget> [
+                  answer.image != null ?
                   Image.network(
-                    'teste',
+                    answer.image!,
                     width: 40,
-                  ),
-                  const Expanded(
+                  ) : const SizedBox(height: 0, width: 40),
+                  Expanded(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
-                        'React',
-                        style: TextStyle(
+                        answer.answer,
+                        style: const TextStyle(
                           fontSize: 16,
                         ),
                       ),
                     ),
                   ),
                   Text(
-                    '100%',
+                    answer.percent,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).primaryColorDark,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Icon(
-                      Icons.check_circle_rounded,
-                      color: Theme.of(context).highlightColor,
-                    ),
-                  ),
+                  answer.isCurrentAccountAnswer ? const ActiveIcon() : const DisabledIcon()
                 ],
               ),
             ),

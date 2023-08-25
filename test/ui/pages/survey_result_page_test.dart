@@ -52,6 +52,7 @@ void main() {
 
     expect(find.text('Algo inesperado aconteceu'), findsOneWidget);
     expect(find.text('Recarregar'), findsOneWidget);
+    expect(find.text('Question 1'), findsNothing);
   });
 
   testWidgets('Should call LoadSurveyResult on reload button click', (WidgetTester widgetTester) async {
@@ -62,5 +63,24 @@ void main() {
     await widgetTester.tap(find.text('Recarregar'));
 
     verify(()=> presenter.loadData()).called(2);
+  });
+
+  testWidgets('Should present data if loadSurveyResultStream loads', (WidgetTester widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitSurveyResult(ViewEntityFactory.surveyResult());
+    await mockNetworkImagesFor(() async => await widgetTester.pump());
+
+    expect(find.text('Algo inesperado aconteceu'), findsNothing);
+    expect(find.text('Recarregar'), findsNothing);
+    expect(find.text('Question 1'), findsOneWidget);
+    expect(find.text('Answer 1'), findsOneWidget);
+    expect(find.text('Answer 2'), findsOneWidget);
+    expect(find.text('60%'), findsOneWidget);
+    expect(find.text('40%'), findsOneWidget);
+    expect(find.byType(ActiveIcon), findsOneWidget);
+    expect(find.byType(DisabledIcon), findsOneWidget);
+    final image = widgetTester.widget<Image>(find.byType(Image)).image as NetworkImage;
+    expect(image.url, 'any_image');
   });
 }

@@ -1,19 +1,19 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:clean_arch/ui/pages/survey_result/survey_result.dart';
+
 class SurveyResultViewEntity extends Equatable {
   const SurveyResultViewEntity({
-    required this.id,
+    required this.surveyId,
     required this.question,
-    required this.date,
-    required this.didAnswer,
+    required this.answers,
   });
 
-  final String id;
+  final String surveyId;
   final String question;
-  final String date;
-  final bool didAnswer;
+  final List<SurveyAnswerViewEntity> answers;
   
   @override
-  List<Object?> get props => [ id, question, date, didAnswer ];
+  List<Object?> get props => [ surveyId, question, answers ];
 
 }
