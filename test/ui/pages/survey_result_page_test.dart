@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:get/get.dart';
 
+import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 
 import '../mocks/mocks.dart';
@@ -41,5 +42,15 @@ void main() {
     await widgetTester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Should present error if loadSurveysStream fails', (WidgetTester widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitSurveyResultError(UiError.unexpected.description);
+    await widgetTester.pump();
+
+    expect(find.text('Algo inesperado aconteceu'), findsOneWidget);
+    expect(find.text('Recarregar'), findsOneWidget);
   });
 }
