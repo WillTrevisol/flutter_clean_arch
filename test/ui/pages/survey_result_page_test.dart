@@ -44,7 +44,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-  testWidgets('Should present error if loadSurveysStream fails', (WidgetTester widgetTester) async {
+  testWidgets('Should present error if loadSurveyResultStream fails', (WidgetTester widgetTester) async {
     await loadPage(widgetTester);
 
     presenter.emitSurveyResultError(UiError.unexpected.description);
@@ -52,5 +52,15 @@ void main() {
 
     expect(find.text('Algo inesperado aconteceu'), findsOneWidget);
     expect(find.text('Recarregar'), findsOneWidget);
+  });
+
+  testWidgets('Should call LoadSurveyResult on reload button click', (WidgetTester widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitSurveyResultError(UiError.unexpected.description);
+    await widgetTester.pump();
+    await widgetTester.tap(find.text('Recarregar'));
+
+    verify(()=> presenter.loadData()).called(2);
   });
 }

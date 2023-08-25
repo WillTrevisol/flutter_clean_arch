@@ -54,7 +54,7 @@ void main() {
     expect(find.text('Question 1'), findsNothing);
   });
 
-  testWidgets('Should present list if loadSurveysStream fails', (WidgetTester widgetTester) async {
+  testWidgets('Should present list if loadSurveysStream loads', (WidgetTester widgetTester) async {
     await loadPage(widgetTester);
 
     presenter.emitSurveys(ViewEntityFactory.surveyList());
