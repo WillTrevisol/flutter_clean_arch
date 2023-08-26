@@ -16,6 +16,7 @@ void main() {
       initialRoute: '/surveys',
       getPages: [
         GetPage(name: '/surveys', page: () => SurveysPage(presenter: presenter)),
+        GetPage(name: '/fake_page', page: () => const Scaffold(body: Text('fake_page')))
       ],
     );
     await tester.pumpWidget(surveysPage);
@@ -76,5 +77,27 @@ void main() {
     await widgetTester.tap(find.text('Recarregar'));
 
     verify(()=> presenter.loadData()).called(2);
+  });
+
+  testWidgets('Should change page', (WidgetTester widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitSurveys(ViewEntityFactory.surveyList());
+    await widgetTester.pump();
+
+    await widgetTester.tap(find.text('Question 1'));
+    await widgetTester.pump();
+
+    verify(() => presenter.navigateToSurveyResultPage('1')).called(1);
+  });
+
+  testWidgets('Should change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.natigateToPageController.add('/fake_page');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/fake_page');
+    expect(find.text('fake_page'), findsOneWidget);
   });
 }

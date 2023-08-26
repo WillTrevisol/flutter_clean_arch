@@ -9,13 +9,18 @@ class SurveysPresenterMock extends Mock implements SurveysPresenter {
     mockLoadData();
     when(() => isLoadingStream).thenAnswer((_) => isLoadingController.stream);
     when(() => surveysStream).thenAnswer((_) => surveysController.stream);
+    when(() => navigateToPageStream).thenAnswer((_) => natigateToPageController.stream);
   }
 
   When mockLoadDataCall() => when(() => loadData());
   void mockLoadData() => mockLoadDataCall().thenAnswer((_) async => _);
 
+  When mockNavigateToSurveyResultPageCall() => when(() => navigateToSurveyResultPage(any()));
+  void mockNavigateToSurveyResultPage() => mockNavigateToSurveyResultPageCall().thenAnswer((_) => _);
+
   final isLoadingController = StreamController<bool>();
   final surveysController = StreamController<List<SurveyViewEntity>>();
+  final natigateToPageController = StreamController<String>();
 
   void emitIsLoading(bool value) => isLoadingController.add(value);
   void emitSurveys(List<SurveyViewEntity> data) => surveysController.add(data);
@@ -25,5 +30,6 @@ class SurveysPresenterMock extends Mock implements SurveysPresenter {
   dispose() {
     isLoadingController.close();
     surveysController.close();
+    natigateToPageController.close();
   }
 }

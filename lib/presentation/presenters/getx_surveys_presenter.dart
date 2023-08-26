@@ -12,11 +12,14 @@ class GetxSurveysPresenter implements SurveysPresenter {
 
   final _isLoading = Rx<bool>(false);
   final _surveys = Rx<List<SurveyViewEntity>>([]);
+  final _navigateToPageController = Rx<String>('');
 
   @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
   @override
   Stream<List<SurveyViewEntity>> get surveysStream => _surveys.stream;
+  @override
+  Stream<String> get navigateToPageStream => _navigateToPageController.stream;
 
   @override
   Future<void> loadData() async {
@@ -43,5 +46,8 @@ class GetxSurveysPresenter implements SurveysPresenter {
     _isLoading.close();
     _surveys.close();
   }
+  
+  @override
+  void navigateToSurveyResultPage(String surveyId) => _navigateToPageController.value = '/survey_result/$surveyId';
 
 }
