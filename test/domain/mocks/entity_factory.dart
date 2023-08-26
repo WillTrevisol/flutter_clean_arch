@@ -21,4 +21,22 @@ class EntityFactory {
     ),
   ];
 
+  static SurveyResult surveyResult() => SurveyResult(
+    surveyId: faker.guid.guid(),
+    question: faker.internet.random.string(50),
+    answers: <SurveyAnswer> [
+      SurveyAnswer(
+        image: faker.internet.httpUrl(),
+        answer: faker.lorem.sentence(),
+        isCurrentAccountAnswer: faker.randomGenerator.boolean(),
+        percent: faker.randomGenerator.integer(100),
+      ),
+      SurveyAnswer(
+        answer: faker.lorem.sentence(),
+        isCurrentAccountAnswer: faker.randomGenerator.boolean(),
+        percent: faker.randomGenerator.integer(100),
+      ),
+    ],
+  );
+
 }

@@ -4,3 +4,5 @@ export 'secure_cache_storage_spy.dart';
 export 'fetch_cache_storage_mock.dart';
 export 'local_load_surveys_mock.dart';
 export 'remote_load_surveys_mock.dart';
+export 'load_survey_result_mock.dart';
+export 'load_surveys_mock.dart';

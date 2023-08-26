@@ -5,7 +5,7 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/presentation/presenters/presenters.dart';
 
-import '../../data/mocks/load_surveys_mock.dart';
+import '../../data/mocks/mocks.dart';
 
 void main() {
 
