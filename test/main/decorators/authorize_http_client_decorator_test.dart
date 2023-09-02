@@ -11,6 +11,7 @@ void main() {
 
   late AuthorizeHttpClientDecorator systemUnderTest;
   late FetchSecureCacheStorageMock fetchSecureCacheStorage;
+  late DeleteSecureCacheStorageMock deleteSecureCacheStorage;
   late HttpClientMock httpClient;
   late String url;
   late String method;
@@ -23,9 +24,11 @@ void main() {
     token = faker.guid.guid();
     url = faker.internet.httpUrl();
     fetchSecureCacheStorage = FetchSecureCacheStorageMock();
+    deleteSecureCacheStorage = DeleteSecureCacheStorageMock();
     httpClient = HttpClientMock();
     systemUnderTest = AuthorizeHttpClientDecorator(
       fetchSecureCacheStorage: fetchSecureCacheStorage,
+      deleteSecureCacheStorage: deleteSecureCacheStorage,
       decoratee: httpClient,
     );
     httpClient.mockRequest(null);
@@ -60,6 +63,7 @@ void main() {
     final future = systemUnderTest.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
+    verify(() => deleteSecureCacheStorage.deleteSecure('token')).called(1);
   });
 
   test('Should rethrow if decoratee throws', () async {
@@ -68,5 +72,15 @@ void main() {
     final future = systemUnderTest.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.badRequest));
+  });
+
+  test('Should call delete cache if request throws ForbiddenError', () async {
+    httpClient.mockRequestError(HttpError.forbidden);
+
+    final future = systemUnderTest.request(url: url, method: method, body: body);
+    await untilCalled(() => deleteSecureCacheStorage.deleteSecure('token'));
+
+    expect(future, throwsA(HttpError.forbidden));
+    verify(() => deleteSecureCacheStorage.deleteSecure('token')).called(1);
   });
 }
