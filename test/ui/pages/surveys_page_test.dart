@@ -16,7 +16,8 @@ void main() {
       initialRoute: '/surveys',
       getPages: [
         GetPage(name: '/surveys', page: () => SurveysPage(presenter: presenter)),
-        GetPage(name: '/fake_page', page: () => const Scaffold(body: Text('fake_page')))
+        GetPage(name: '/fake_page', page: () => const Scaffold(body: Text('fake_page'))),
+        GetPage(name: '/login', page: () => const Scaffold(body: Text('fake_login_page')))
       ],
     );
     await tester.pumpWidget(surveysPage);
@@ -99,5 +100,21 @@ void main() {
 
     expect(Get.currentRoute, '/fake_page');
     expect(find.text('fake_page'), findsOneWidget);
+  });
+
+  testWidgets('Should logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitSessionExpired(true);
+    await tester.pumpAndSettle();
+    expect(Get.currentRoute, '/login');
+  });
+
+  testWidgets('Should not logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitSessionExpired(false);
+    await tester.pumpAndSettle();
+    expect(Get.currentRoute, '/surveys');
   });
 }

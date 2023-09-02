@@ -17,6 +17,7 @@ void main() {
       initialRoute: '/survey_result/any_survey_id',
       getPages: [
         GetPage(name: '/survey_result/:survey_id', page: () => SurveyResultPage(presenter: presenter)),
+        GetPage(name: '/login', page: () => const Scaffold(body: Text('fake_login_page'))),
       ],
     );
     await mockNetworkImagesFor(() async => await tester.pumpWidget(surveysPage));
@@ -82,5 +83,23 @@ void main() {
     expect(find.byType(DisabledIcon), findsOneWidget);
     final image = widgetTester.widget<Image>(find.byType(Image)).image as NetworkImage;
     expect(image.url, 'any_image');
+  });
+
+  testWidgets('Should logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitSessionExpired(true);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/login');
+  });
+
+  testWidgets('Should not logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitSessionExpired(false);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/survey_result/any_survey_id');
   });
 }

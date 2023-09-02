@@ -1,3 +1,4 @@
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:get/get.dart';
 
 import 'package:clean_arch/domain/usecases/usecases.dart';
@@ -12,11 +13,14 @@ class GetxSurveyResultPresenter implements SurveyResultPresenter {
 
   final _isLoading = Rx<bool>(false);
   final _surveyResult = Rx<SurveyResultViewEntity?>(null);
+  final _sessionExpiredController = Rx<bool>(false);
 
   @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
   @override
   Stream<SurveyResultViewEntity?> get surveyResultStream => _surveyResult.stream;
+  @override
+  Stream<bool> get sessionExpiredStream => _sessionExpiredController.stream;
 
   @override
   Future<void> loadData() async {
@@ -33,8 +37,12 @@ class GetxSurveyResultPresenter implements SurveyResultPresenter {
           percent: '${answer.percent}%',
         )).toList(),
       );
-    } catch (error) {
-      _surveyResult.subject.addError(UiError.unexpected.description, StackTrace.current);
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        _sessionExpiredController.value = true;
+      } else {
+        _surveyResult.subject.addError(UiError.unexpected.description, StackTrace.current);
+      }
     } finally {
       _isLoading.value = false;
     }

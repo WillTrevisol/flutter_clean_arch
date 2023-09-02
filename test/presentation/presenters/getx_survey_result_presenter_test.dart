@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:faker/faker.dart';
 
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/presentation/presenters/presenters.dart';
@@ -57,9 +58,16 @@ void main() {
   });
 
   test('Should emit correct events on failure', () async {
-    loadSurveyResult.mockLoadBySurveyError(UiError.unexpected.description);
+    loadSurveyResult.mockLoadBySurveyError(DomainError.unexpected);
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
     systemUnderTest.surveyResultStream.listen(null, onError: expectAsync2((error, stackTrace) => expect(error, UiError.unexpected.description)));
+
+    await systemUnderTest.loadData();
+  });
+
+  test('Should emit correct events on access denied', () async {
+    loadSurveyResult.mockLoadBySurveyError(DomainError.accessDenied);
+    expectLater(systemUnderTest.sessionExpiredStream, emits(true));
 
     await systemUnderTest.loadData();
   });

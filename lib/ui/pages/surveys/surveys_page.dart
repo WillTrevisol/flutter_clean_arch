@@ -20,6 +20,12 @@ class SurveysPage extends StatelessWidget {
       ),
       body: Builder(
         builder: (context) {
+          presenter.sessionExpiredStream.listen((expired) {
+            if (expired) {
+              Get.offAllNamed('/login');
+            }
+          });
+
           presenter.isLoadingStream.listen((isLoading) {
             if (isLoading) {
               showLoading(context);

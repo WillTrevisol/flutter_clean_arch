@@ -1,20 +1,26 @@
-import 'package:clean_arch/ui/helpers/helpers.dart';
-import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/presentation/presenters/presenters.dart';
+import 'package:clean_arch/domain/entities/entities.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/ui/helpers/helpers.dart';
+import 'package:clean_arch/ui/pages/pages.dart';
 
 import '../../data/mocks/mocks.dart';
+import '../../domain/mocks/mocks.dart';
 
 void main() {
 
   late GetxSurveysPresenter systemUnderTest;
   late LoadSurveysMock loadSurveys;
+  late List<Survey> surveys;
 
   setUp(() {
+    surveys = EntityFactory.listSurveys();
     loadSurveys = LoadSurveysMock();
     systemUnderTest = GetxSurveysPresenter(loadSurveys: loadSurveys);
+    loadSurveys.mockLoad(surveys);
   });
 
   tearDown(() => systemUnderTest.dispose());
@@ -31,13 +37,13 @@ void main() {
       SurveyViewEntity(
         id: surveys[0].id,
         question: surveys[0].question,
-        date: '16 Aug 2023',
+        date: '18 Aug 2023',
         didAnswer: surveys[0].didAnswer,
       ),
       SurveyViewEntity(
         id: surveys[1].id,
         question: surveys[1].question,
-        date: '10 Aug 2023',
+        date: '17 Aug 2023',
         didAnswer: surveys[1].didAnswer,
       ),
     ])));
@@ -46,9 +52,16 @@ void main() {
   });
 
   test('Should emit correct events on failure', () async {
-    loadSurveys.mockLoadError(UiError.unexpected.description);
+    loadSurveys.mockLoadError(DomainError.unexpected);
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
     systemUnderTest.surveysStream.listen(null, onError: expectAsync2((error, stackTrace) => expect(error, UiError.unexpected.description)));
+
+    await systemUnderTest.loadData();
+  });
+
+  test('Should emit correct events on access denied', () async {
+    loadSurveys.mockLoadError(DomainError.accessDenied);
+    expectLater(systemUnderTest.sessionExpiredStream, emits(true));
 
     await systemUnderTest.loadData();
   });

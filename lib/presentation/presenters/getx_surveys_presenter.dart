@@ -1,3 +1,4 @@
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -13,6 +14,7 @@ class GetxSurveysPresenter implements SurveysPresenter {
   final _isLoading = Rx<bool>(false);
   final _surveys = Rx<List<SurveyViewEntity>>([]);
   final _navigateToPageController = Rx<String>('');
+  final _sessionExpiredController = Rx<bool>(false);
 
   @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
@@ -20,6 +22,8 @@ class GetxSurveysPresenter implements SurveysPresenter {
   Stream<List<SurveyViewEntity>> get surveysStream => _surveys.stream;
   @override
   Stream<String> get navigateToPageStream => _navigateToPageController.stream;
+  @override
+  Stream<bool> get sessionExpiredStream => _sessionExpiredController.stream;
 
   @override
   Future<void> loadData() async {
@@ -34,8 +38,12 @@ class GetxSurveysPresenter implements SurveysPresenter {
           didAnswer: survey.didAnswer,
         )).toList();
 
-    } catch (error) {
-      _surveys.subject.addError(UiError.unexpected.description, StackTrace.current);
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        _sessionExpiredController.value = true;
+      } else {
+        _surveys.subject.addError(UiError.unexpected.description, StackTrace.current);
+      }
     } finally {
       _isLoading.value = false;
     }
@@ -45,6 +53,8 @@ class GetxSurveysPresenter implements SurveysPresenter {
   void dispose() {
     _isLoading.close();
     _surveys.close();
+    _navigateToPageController.close();
+    _sessionExpiredController.close();
   }
   
   @override
