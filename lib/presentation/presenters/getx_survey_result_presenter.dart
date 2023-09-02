@@ -1,31 +1,30 @@
-import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:get/get.dart';
 
+import 'package:clean_arch/presentation/mixins/mixins.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 
-class GetxSurveyResultPresenter implements SurveyResultPresenter {
+class GetxSurveyResultPresenter extends GetxController with LoadingManager, SessionManager implements SurveyResultPresenter {
   GetxSurveyResultPresenter({required this.loadSurveyResult, required this.surveyId});
 
   final LoadSurveyResult loadSurveyResult;
   final String surveyId;
 
-  final _isLoading = Rx<bool>(false);
   final _surveyResult = Rx<SurveyResultViewEntity?>(null);
-  final _sessionExpiredController = Rx<bool>(false);
 
   @override
-  Stream<bool> get isLoadingStream => _isLoading.stream;
+  Stream<bool> get isLoadingStream => isLoading;
   @override
   Stream<SurveyResultViewEntity?> get surveyResultStream => _surveyResult.stream;
   @override
-  Stream<bool> get sessionExpiredStream => _sessionExpiredController.stream;
+  Stream<bool> get sessionExpiredStream => sessionExpired;
 
   @override
   Future<void> loadData() async {
     try {
-      _isLoading.value = true;
+      setIsLoading = true;
       final surveyResult = await loadSurveyResult.loadBySurvey(surveyId: surveyId);
       _surveyResult.value = SurveyResultViewEntity(
         surveyId: surveyId,
@@ -39,19 +38,21 @@ class GetxSurveyResultPresenter implements SurveyResultPresenter {
       );
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied) {
-        _sessionExpiredController.value = true;
+        setSessionExpired = true;
       } else {
         _surveyResult.subject.addError(UiError.unexpected.description, StackTrace.current);
       }
     } finally {
-      _isLoading.value = false;
+      setIsLoading = false;
     }
   }
 
   @override
   void dispose() {
-    _isLoading.close();
+    disposeIsLoading();
+    disposeSessionExpired();
     _surveyResult.close();
+    super.dispose();
   }
 
 }

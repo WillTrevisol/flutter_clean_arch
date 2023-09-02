@@ -1,34 +1,32 @@
-import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/presentation/mixins/mixins.dart';
 
-class GetxSurveysPresenter implements SurveysPresenter {
+class GetxSurveysPresenter extends GetxController with LoadingManager, SessionManager, NavigationManager implements SurveysPresenter {
   GetxSurveysPresenter({required this.loadSurveys});
 
   final LoadSurveys loadSurveys;
 
-  final _isLoading = Rx<bool>(false);
   final _surveys = Rx<List<SurveyViewEntity>>([]);
-  final _navigateToPageController = Rx<String>('');
-  final _sessionExpiredController = Rx<bool>(false);
 
   @override
-  Stream<bool> get isLoadingStream => _isLoading.stream;
+  Stream<bool> get isLoadingStream => isLoading;
   @override
   Stream<List<SurveyViewEntity>> get surveysStream => _surveys.stream;
   @override
-  Stream<String> get navigateToPageStream => _navigateToPageController.stream;
+  Stream<String> get navigateToPageStream => navigateToPage;
   @override
-  Stream<bool> get sessionExpiredStream => _sessionExpiredController.stream;
+  Stream<bool> get sessionExpiredStream => sessionExpired;
 
   @override
   Future<void> loadData() async {
     try {
-      _isLoading.value = true;
+      setIsLoading = true;
       final surveys = await loadSurveys.load();
       _surveys.value = surveys.map((survey) => 
         SurveyViewEntity(
@@ -40,24 +38,24 @@ class GetxSurveysPresenter implements SurveysPresenter {
 
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied) {
-        _sessionExpiredController.value = true;
+        setSessionExpired = true;
       } else {
         _surveys.subject.addError(UiError.unexpected.description, StackTrace.current);
       }
     } finally {
-      _isLoading.value = false;
+      setIsLoading = false;
     }
   }
 
   @override
   void dispose() {
-    _isLoading.close();
+    disposeIsLoading();
+    disposeSessionExpired();
     _surveys.close();
-    _navigateToPageController.close();
-    _sessionExpiredController.close();
+    super.dispose();
   }
   
   @override
-  void navigateToSurveyResultPage(String surveyId) => _navigateToPageController.value = '/survey_result/$surveyId';
+  void navigateToSurveyResultPage(String surveyId) => setNavigateToPage = '/survey_result/$surveyId';
 
 }
