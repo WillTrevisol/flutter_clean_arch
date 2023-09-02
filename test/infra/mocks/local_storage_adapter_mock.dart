@@ -5,6 +5,7 @@ class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {
   FlutterSecureStorageSpy() {
     mockSave();
     mockFetch();
+    mockDelete();
   }
 
   When mockSaveCall() => when(() => write(key: any(named: 'key'), value: any(named: 'value')));
@@ -14,4 +15,8 @@ class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {
   When mockFetchCall() => when(() => read(key: any(named: 'key')));
   void mockFetch({String? value}) => mockFetchCall().thenAnswer((_) async => value);
   void mockFetchError() => mockFetchCall().thenThrow(Exception());
+
+  When mockDeletecall() => when(() => delete(key: any(named: 'key')));
+  void mockDelete() => mockDeletecall().thenAnswer((_) async => _);
+  void mockDeleteError() => mockDeletecall().thenThrow(Exception());
 }

@@ -7,7 +7,7 @@ class FetchSecureCacheStorageMock extends Mock implements FetchSecureCacheStorag
     mockFetchSecure();
   }
 
-  When mockFetchSecureCall() => when(() => fetchSecure(any()));
+  When mockFetchSecureCall() => when(() => fetch(any()));
   void mockFetchSecure({String? token}) => mockFetchSecureCall().thenAnswer((_) async => token);
   void mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
 }

@@ -7,7 +7,7 @@ class DeleteSecureCacheStorageMock extends Mock implements DeleteSecureCacheStor
     mockDeleteSecure();
   }
 
-  When mockDeleteSecureCall() => when(() => deleteSecure(any()));
+  When mockDeleteSecureCall() => when(() => delete(any()));
   void mockDeleteSecure({String? token}) => mockDeleteSecureCall().thenAnswer((_) async => token);
   void mockDeleteSecureError() => mockDeleteSecureCall().thenThrow(Exception());
 }

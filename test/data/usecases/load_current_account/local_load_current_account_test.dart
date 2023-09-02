@@ -23,7 +23,7 @@ void main () {
 
   test('Should call FetchSecureCacheStorage with correct value', () async {
     await systemUnderTest.load();
-    verify(() => fetchSecureCacheStorage.fetchSecure('token'));
+    verify(() => fetchSecureCacheStorage.fetch('token'));
   });
 
   test('Should return an Account', () async {

@@ -20,34 +20,49 @@ void main() {
     secureStorage.mockFetch(value: value);
   });
 
-  group('saveSecure()', () {
-    test('Should call saveSecure with correct values', () async {
-      await systemUnderTest.saveSecure(key: key, value: value);
+  group('save()', () {
+    test('Should call save with correct values', () async {
+      await systemUnderTest.save(key: key, value: value);
       verify(() => secureStorage.write(key: key, value: value));
     });
 
-    test('Should throw if saveSecure throws', () async {
+    test('Should throw if save throws', () async {
       secureStorage.mockSaveError();
-      final future = systemUnderTest.saveSecure(key: key, value: value);
+      final future = systemUnderTest.save(key: key, value: value);
       expect(future, throwsA(const TypeMatcher<Exception>()));
     });
   });
 
-  group('fetchSecure()', () {
-    test('Should call fetchSecure with correct value', () async {
-      await systemUnderTest.fetchSecure(key);
+  group('fetch()', () {
+    test('Should call fetch with correct value', () async {
+      await systemUnderTest.fetch(key);
       verify(() => secureStorage.read(key: key));
     });
 
     test('Should return correct value on success', () async {
-      final fetchedValue = await systemUnderTest.fetchSecure(key);
+      final fetchedValue = await systemUnderTest.fetch(key);
       expect(fetchedValue, value);
     });
 
-    test('Should throw if fetchSecure throws', () async {
+    test('Should throw if fetch throws', () async {
       secureStorage.mockFetchError();
-      final future = systemUnderTest.fetchSecure(key);
+      final future = systemUnderTest.fetch(key);
       expect(future, throwsA(const TypeMatcher<Exception>()));
     });
+
+  group('delete', () {
+    test('Should call delete with correct key', () async {
+      await systemUnderTest.delete(key);
+
+      verify(() => secureStorage.delete(key: key)).called(1);
+    });
+
+    test('Should throw localStorage deleteItem throws', () async {
+      secureStorage.mockDeleteError();
+      final future = systemUnderTest.delete(key);
+
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
+  });
   });
 }

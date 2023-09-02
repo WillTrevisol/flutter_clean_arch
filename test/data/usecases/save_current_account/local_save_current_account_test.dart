@@ -21,7 +21,7 @@ void main() {
 
   test('Should call SaveSecureCacheStorage with correct values', () async {
     await systemUnderTest.save(account);
-    verify(() => secureCacheStorage.saveSecure(key: 'token', value: account.token));
+    verify(() => secureCacheStorage.save(key: 'token', value: account.token));
   });
 
   test('Should throw unexpected error if SaveSecureCacheStorage throws', () async {

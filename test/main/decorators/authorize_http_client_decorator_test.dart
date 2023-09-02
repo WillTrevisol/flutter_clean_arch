@@ -37,7 +37,7 @@ void main() {
   test('Should call FetchSecureCacheStorage with correct key', () async {
     await systemUnderTest.request(url: url, method: method, body: body);
 
-    verify(() => fetchSecureCacheStorage.fetchSecure('token')).called(1);
+    verify(() => fetchSecureCacheStorage.fetch('token')).called(1);
   });
 
   test('Should call decoratee with access token on header', () async {
@@ -63,7 +63,7 @@ void main() {
     final future = systemUnderTest.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(() => deleteSecureCacheStorage.deleteSecure('token')).called(1);
+    verify(() => deleteSecureCacheStorage.delete('token')).called(1);
   });
 
   test('Should rethrow if decoratee throws', () async {
@@ -78,9 +78,9 @@ void main() {
     httpClient.mockRequestError(HttpError.forbidden);
 
     final future = systemUnderTest.request(url: url, method: method, body: body);
-    await untilCalled(() => deleteSecureCacheStorage.deleteSecure('token'));
+    await untilCalled(() => deleteSecureCacheStorage.delete('token'));
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(() => deleteSecureCacheStorage.deleteSecure('token')).called(1);
+    verify(() => deleteSecureCacheStorage.delete('token')).called(1);
   });
 }
