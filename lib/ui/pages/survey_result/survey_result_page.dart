@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/ui/mixins/mixins.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/components/components.dart';
 
-class SurveyResultPage extends StatelessWidget {
+class SurveyResultPage extends StatelessWidget with LoadingManager, SessionManager {
   const SurveyResultPage({super.key, required this.presenter});
 
   final SurveyResultPresenter presenter;
@@ -18,20 +18,8 @@ class SurveyResultPage extends StatelessWidget {
       ),
       body: Builder(
         builder: (context) {
-          presenter.isLoadingStream.listen((isLoading) {
-            if (isLoading) {
-              showLoading(context);
-            } else {
-              hideLoading(context);
-            }
-          });
-
-          presenter.sessionExpiredStream.listen((expired) {
-            if (expired) {
-              Get.offAllNamed('/login');
-            }
-          });
-
+          handleLoading(context, presenter.isLoadingStream);
+          handleSessionExpired(presenter.sessionExpiredStream);
           presenter.loadData();
 
           return StreamBuilder<SurveyResultViewEntity?>(

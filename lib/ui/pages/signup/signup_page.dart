@@ -3,56 +3,27 @@ import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
+import 'package:clean_arch/ui/mixins/mixins.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/components/components.dart';
 import 'package:clean_arch/ui/pages/signup/components/components.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignUpPage extends StatelessWidget with KeyboardManager, LoadingManager, UiErrorManager, NavigationManager {
   const SignUpPage({super.key, required this.presenter});
 
   final SignUpPresenter presenter;
-
-  @override
-  State<SignUpPage> createState() => _SignUpPageState();
-}
-
-class _SignUpPageState extends State<SignUpPage> {
-
-  void _hideKeyboard() {
-    final currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.presenter.isLoadingStream.listen((isLoading) {
-            if (isLoading) {
-              showLoading(context);
-            }
-            if (!isLoading) {
-              hideLoading(context);
-            }
-          });
-
-          widget.presenter.mainErrorStream.listen((error) {
-            if (error != null) {
-              showErrorMessage(context: context, error: error.description);
-            }
-          });
-
-          widget.presenter.navigateToPageStream.listen((page) {
-            if (page.isNotEmpty) {
-              Get.offAllNamed(page);
-            }
-          });
+          handleLoading(context, presenter.isLoadingStream);
+          handleMainError(context, presenter.mainErrorStream);
+          handleNavigation(presenter.navigateToPageStream, clearStack: true);
 
           return GestureDetector(
-            onTap: _hideKeyboard,
+            onTap: () => hideKeyboard(context),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Padding(
                     padding: const EdgeInsets.all(28),
                     child: ListenableProvider(
-                      create: (context) => widget.presenter,
+                      create: (context) => presenter,
                       child: Form(
                         child: Column(
                           children: <Widget> [
