@@ -30,5 +30,13 @@ class LocalLoadSurveyResult implements LoadSurveyResult {
       await cacheStorage.delete('survey_result/$surveyId');
     }
   }
+
+  Future<void> save({required String surveyId, required SurveyResult surveyResult}) async {
+    try {
+      await cacheStorage.save(key: 'survey_result/$surveyId', value: LocalSurveyResult.fromDomainEntity(surveyResult).toMap());
+    } catch (error) {
+      throw DomainError.unexpected;
+    }
+  }
   
 }

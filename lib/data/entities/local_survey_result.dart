@@ -30,4 +30,16 @@ class LocalSurveyResult {
     question: question,
     answers: answers.map((LocalSurveyAnswer answer) => answer.toDomainEntity()).toList(),
   );
+
+  factory LocalSurveyResult.fromDomainEntity(SurveyResult surveyResult) => LocalSurveyResult(
+    surveyId: surveyResult.surveyId,
+    question: surveyResult.question,
+    answers: surveyResult.answers.map((answer) => LocalSurveyAnswer.fromDomainEntity(answer)).toList(),
+  );
+
+  Map<String, dynamic> toMap() => {
+    'surveyId': surveyId,
+    'question': question,
+    'answers': answers.map((answer) => answer.toMap()).toList(),
+  };
 }

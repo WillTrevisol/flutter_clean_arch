@@ -6,6 +6,7 @@ import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/data/usecases/usecases.dart';
 
+import '../../../domain/mocks/mocks.dart';
 import '../../../infra/mocks/mocks.dart';
 import '../../mocks/mocks.dart';
 
@@ -127,6 +128,48 @@ void main() {
       await systemUnderTest.validate(surveyId);
 
       verify(() => cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+  });
+
+  group('save', () {
+    late LocalLoadSurveyResult systemUnderTest;
+    late CacheStorageMock cacheStorage;
+    late SurveyResult surveyResultMock;
+    late String surveyId;
+
+    setUp(() {
+      cacheStorage = CacheStorageMock();
+      systemUnderTest = LocalLoadSurveyResult(cacheStorage: cacheStorage);
+      surveyId = faker.guid.guid();
+      surveyResultMock = EntityFactory.surveyResult();
+    });
+
+    test('Should call CacheStorage with correct key', () async {
+      final surveyResultMap = {
+        'surveyId': surveyResultMock.surveyId,
+        'question': surveyResultMock.question,
+        'answers': [{
+          'image': surveyResultMock.answers[0].image,
+          'answer': surveyResultMock.answers[0].answer,
+          'isCurrentAccountAnswer': surveyResultMock.answers[0].isCurrentAccountAnswer,
+          'percent': surveyResultMock.answers[0].percent,
+        }, {
+          'image': null,
+          'answer': surveyResultMock.answers[1].answer,
+          'isCurrentAccountAnswer': surveyResultMock.answers[1].isCurrentAccountAnswer,
+          'percent': surveyResultMock.answers[1].percent,
+        }],
+      };
+      await systemUnderTest.save(surveyId: surveyId, surveyResult: surveyResultMock);
+
+      verify(() => cacheStorage.save(key: 'survey_result/$surveyId', value: surveyResultMap)).called(1);
+    });
+
+    test('Should throw UnexpectedError if save throws', () async {
+      cacheStorage.mockSaveError();
+      final future = systemUnderTest.save(surveyId: surveyId, surveyResult: surveyResultMock);
+
+      expect(future, throwsA(DomainError.unexpected));
     });
   });
 }

@@ -35,4 +35,18 @@ class LocalSurveyAnswer {
     percent: percent,
   );
 
+  factory LocalSurveyAnswer.fromDomainEntity(SurveyAnswer asnwer) => LocalSurveyAnswer(
+    image: asnwer.image,
+    answer: asnwer.answer,
+    isCurrentAccountAnswer: asnwer.isCurrentAccountAnswer,
+    percent: asnwer.percent,
+  );
+
+  Map<String, dynamic> toMap() => {
+    'image': image,
+    'answer': answer,
+    'isCurrentAccountAnswer': isCurrentAccountAnswer,
+    'percent': percent,
+  };
+
 }
