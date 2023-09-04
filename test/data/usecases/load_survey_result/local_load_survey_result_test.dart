@@ -87,5 +87,47 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
   });
+
+  group('validate', () {
+    late LocalLoadSurveyResult systemUnderTest;
+    late CacheStorageMock cacheStorage;
+    late Map cacheSurveysMock;
+    late String surveyId;
+
+    setUp(() {
+      cacheStorage = CacheStorageMock();
+      systemUnderTest = LocalLoadSurveyResult(cacheStorage: cacheStorage);
+      surveyId = faker.guid.guid();
+      cacheSurveysMock = CacheFactory.surveyResult();
+      cacheStorage.mockFetch(surveys: cacheSurveysMock);
+    });
+
+    test('Should call CacheStorage with correct key', () async {
+      await systemUnderTest.validate(surveyId);
+
+      verify(() => cacheStorage.fetch('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if is invalid', () async {
+      cacheStorage.mockFetch(surveys: CacheFactory.invalidSurveyResult());
+      await systemUnderTest.validate(surveyId);
+
+      verify(() => cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if is incomplete', () async {
+      cacheStorage.mockFetch(surveys: CacheFactory.incompleteSurveyResult());
+      await systemUnderTest.validate(surveyId);
+
+      verify(() => cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete if fetch throws', () async {
+      cacheStorage.mockFetchError();
+      await systemUnderTest.validate(surveyId);
+
+      verify(() => cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+  });
 }
  
