@@ -54,4 +54,10 @@ void main() {
 
     verify(() => localLoadSurveyResult.save(surveyId: surveyId, surveyResult: surveyResultMock)).called(1);
   });
+
+  test('Should return remote data', () async {
+    final surveyResult = await systemUnderTest.loadBySurvey(surveyId: surveyId);
+
+    expect(surveyResult, surveyResultMock);
+  });
 }
