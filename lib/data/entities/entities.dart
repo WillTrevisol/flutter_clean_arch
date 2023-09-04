@@ -6,3 +6,5 @@ export 'remote_survey.dart';
 export 'local_survey.dart';
 export 'remote_survey_result.dart';
 export 'remote_survey_answer.dart';
+export 'local_survey_answer.dart';
+export 'local_survey_result.dart';
