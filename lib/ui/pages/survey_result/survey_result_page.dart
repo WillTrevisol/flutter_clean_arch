@@ -30,7 +30,10 @@ class SurveyResultPage extends StatelessWidget with LoadingManager, SessionManag
               }
 
               if (snapshot.hasData) {
-                return SurveyResult(viewEntity: snapshot.data!);
+                return SurveyResult(
+                  viewEntity: snapshot.data!,
+                  onSave: presenter.save,
+                );
               }
               return const SizedBox(height: 0);
             },

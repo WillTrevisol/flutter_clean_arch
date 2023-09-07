@@ -7,6 +7,7 @@ import 'package:clean_arch/ui/pages/pages.dart';
 class SurveyResultPresenterMock extends Mock implements SurveyResultPresenter {
   SurveyResultPresenterMock() {
     mockLoadData();
+    mockSave();
     when(() => isLoadingStream).thenAnswer((_) => isLoadingController.stream);
     when(() => surveyResultStream).thenAnswer((_) => surveyResultController.stream);
     when(() => sessionExpiredStream).thenAnswer((_) => sessionExpiredController.stream);
@@ -14,6 +15,9 @@ class SurveyResultPresenterMock extends Mock implements SurveyResultPresenter {
 
   When mockLoadDataCall() => when(() => loadData());
   void mockLoadData() => mockLoadDataCall().thenAnswer((_) async => _);
+
+  When mockSaveCall() => when(() => save(answer: any(named: 'answer')));
+  void mockSave() => mockSaveCall().thenAnswer((_) async => _);
 
   final isLoadingController = StreamController<bool>();
   final surveyResultController = StreamController<SurveyResultViewEntity>();

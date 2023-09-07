@@ -5,6 +5,7 @@ abstract class SurveyResultPresenter {
   Stream<SurveyResultViewEntity?> get surveyResultStream;
   Stream<bool> get sessionExpiredStream;
   Future<void> loadData();
+  Future<void> save({required String answer});
 
   void dispose();
 }

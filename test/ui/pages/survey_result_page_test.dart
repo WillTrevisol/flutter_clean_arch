@@ -102,4 +102,14 @@ void main() {
 
     expect(Get.currentRoute, '/survey_result/any_survey_id');
   });
+
+  testWidgets('Should call save on list item receives a click', (WidgetTester widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitSurveyResult(ViewEntityFactory.surveyResult());
+    await mockNetworkImagesFor(() async => await widgetTester.pump());
+    await widgetTester.tap(find.text('Answer 1'));
+
+    verify(()=> presenter.save(answer: 'Answer 1')).called(1);
+  });
 }

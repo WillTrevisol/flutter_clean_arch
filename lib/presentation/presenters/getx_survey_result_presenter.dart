@@ -54,5 +54,9 @@ class GetxSurveyResultPresenter extends GetxController with LoadingManager, Sess
     _surveyResult.close();
     super.dispose();
   }
+  
+  @override
+  Future<void> save({required String answer}) async {
+  }
 
 }
