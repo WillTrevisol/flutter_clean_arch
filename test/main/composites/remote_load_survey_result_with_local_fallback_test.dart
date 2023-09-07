@@ -37,7 +37,7 @@ void main() {
   test('Should call local save with remote data', () async {
     await systemUnderTest.loadBySurvey(surveyId: surveyId);
 
-    verify(() => localLoadSurveyResult.save(surveyId: surveyId, surveyResult: surveyResultMock)).called(1);
+    verify(() => localLoadSurveyResult.save(surveyResultMock)).called(1);
   });
 
   test('Should return remote data', () async {

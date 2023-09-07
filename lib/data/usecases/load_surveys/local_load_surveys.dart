@@ -39,7 +39,7 @@ class LocalLoadSurveys implements LoadSurveys {
     }
   }
 
-  List<Survey> _fromMap(List<Map<String, dynamic>> list) => list.map<Survey>((survey) => LocalSurvey.fromMap(survey).toDomainEntity()).toList();
+  List<Survey> _fromMap(List<Map> list) => list.map<Survey>((survey) => LocalSurvey.fromMap(survey).toDomainEntity()).toList();
 
   List<Map<String, dynamic>> _toMap(List<Survey> list) => list.map((survey) => LocalSurvey.fromEntity(survey).toMap()).toList();
 }

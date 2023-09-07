@@ -10,7 +10,7 @@ class LocalLoadSurveyResultMock extends Mock implements LocalLoadSurveyResult {
     mockValidate();
   }
 
-  When mockSaveCall() => when(() => save(surveyId: any(named: 'surveyId'), surveyResult: any(named: 'surveyResult')));
+  When mockSaveCall() => when(() => save(any()));
   void mockSave() => mockSaveCall().thenAnswer((_) async => _);
 
   When mockValidateCall() => when(() => validate(any()));

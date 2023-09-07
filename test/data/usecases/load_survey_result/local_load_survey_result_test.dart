@@ -135,12 +135,10 @@ void main() {
     late LocalLoadSurveyResult systemUnderTest;
     late CacheStorageMock cacheStorage;
     late SurveyResult surveyResultMock;
-    late String surveyId;
 
     setUp(() {
       cacheStorage = CacheStorageMock();
       systemUnderTest = LocalLoadSurveyResult(cacheStorage: cacheStorage);
-      surveyId = faker.guid.guid();
       surveyResultMock = EntityFactory.surveyResult();
     });
 
@@ -160,14 +158,14 @@ void main() {
           'percent': surveyResultMock.answers[1].percent,
         }],
       };
-      await systemUnderTest.save(surveyId: surveyId, surveyResult: surveyResultMock);
+      await systemUnderTest.save(surveyResultMock);
 
-      verify(() => cacheStorage.save(key: 'survey_result/$surveyId', value: surveyResultMap)).called(1);
+      verify(() => cacheStorage.save(key: 'survey_result/${surveyResultMock.surveyId}', value: surveyResultMap)).called(1);
     });
 
     test('Should throw UnexpectedError if save throws', () async {
       cacheStorage.mockSaveError();
-      final future = systemUnderTest.save(surveyId: surveyId, surveyResult: surveyResultMock);
+      final future = systemUnderTest.save(surveyResultMock);
 
       expect(future, throwsA(DomainError.unexpected));
     });

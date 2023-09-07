@@ -13,7 +13,7 @@ class LocalSurvey {
     required this.didAnswer,
   });
 
-  factory LocalSurvey.fromMap(Map<String, dynamic> data) {
+  factory LocalSurvey.fromMap(Map data) {
     if (!data.keys.toSet().containsAll(['id', 'question', 'date', 'didAnswer'])) {
       throw Exception();
     }
