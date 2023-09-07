@@ -240,4 +240,113 @@ void main() {
     });
 
   });
+
+  group('PutGroup', () {
+
+    test('Should call put with correct values', () async {
+      await systemUnderTest.request(url: url, method: 'put', body: {'key': 'value'});
+
+      verify(() => client.put(
+        uri,
+        body: {'key': 'value'},
+        headers: {'content-type': 'application/json', 'accept': 'application/json'}
+      ));
+
+      await systemUnderTest.request(url: url, method: 'put', body: {'key': 'value'}, headers: { 'any_header': 'any_value' });
+
+      verify(() => client.put(
+        uri,
+        body: {'key': 'value'},
+        headers: {'content-type': 'application/json', 'accept': 'application/json', 'any_header': 'any_value'}
+      ));
+    });
+
+    test('Should call put without a body', () async {
+      await systemUnderTest.request(url: url, method: 'put');
+
+      verify(() => client.put(
+        any(),
+        headers: any(named: 'headers'),
+      ));
+    });
+
+    test('Should return data if put returns 200', () async {
+      final response = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(response, {"key":"value"});
+    });
+
+    test('Should return null if put returns 200 with no data', () async {
+      client.mockPut(200, body: '');
+
+      final response = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(response, null);
+    });
+
+    test('Should return null if put returns 204', () async {
+      client.mockPut(204, body: '');
+
+      final response = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(response, null);
+    });
+
+    test('Should return null if put returns 204 with data', () async {
+      client.mockPut(204);
+
+      final response = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(response, null);
+    });
+
+    test('Should return BadRequestError if put returns 400', () async {
+      client.mockPut(400);
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return BadRequestError if put returns 400', () async {
+      client.mockPut(400, body: '');
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return UnauthorizedError if put returns 401', () async {
+      client.mockPut(401);
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+    test('Should return ForbiddenError if put returns 403', () async {
+      client.mockPut(403);
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.forbidden));
+    });
+
+
+    test('Should return NotFoundError if put returns 404', () async {
+      client.mockPut(404);
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.notFound));
+    });
+
+    test('Should return ServerError if put returns 500', () async {
+      client.mockPut(500);
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+  });
 }

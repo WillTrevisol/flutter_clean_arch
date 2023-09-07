@@ -5,6 +5,7 @@ class ClientMock extends Mock implements Client {
   ClientMock() {
     mockPost(200);
     mockGet(200);
+    mockPut(200);
   }
 
   When mockPostCall() => when(() => this.post(any(), body: any(named: 'body'), headers: any(named: 'headers')));
@@ -14,4 +15,8 @@ class ClientMock extends Mock implements Client {
   When mockGetCall() => when(() => this.get(any(), headers: any(named: 'headers')));
   void mockGet(int statusCode, {String body = '{"key":"value"}'}) => mockGetCall().thenAnswer((_) async => Response(body, statusCode));
   void mockGetError() => when(() => mockGetCall().thenThrow(Exception()));
+
+  When mockPutCall() => when(() => this.put(any(), body: any(named: 'body'), headers: any(named: 'headers')));
+  void mockPut(int statusCode, {String body = '{"key":"value"}'}) => mockPutCall().thenAnswer((_) async => Response(body, statusCode));
+  void mockPutError() => when(() => mockPutCall().thenThrow(Exception()));
 }
