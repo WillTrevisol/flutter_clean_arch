@@ -5,6 +5,7 @@ import 'package:clean_arch/ui/pages/pages.dart';
 SurveyResultPresenter getxSurveyResultPresenterFactory(String surveyId) {
   return GetxSurveyResultPresenter(
     loadSurveyResult: remoteLoadSurveyResultWithLocalFallbackFactory(surveyId),
+    saveSurveyResult: remoteSaveSurveyResultFactory(surveyId),
     surveyId: surveyId,
   );
 }
