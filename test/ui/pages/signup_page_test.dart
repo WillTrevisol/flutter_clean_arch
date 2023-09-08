@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:faker/faker.dart';
-import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/errors/errors.dart';
 
+import '../helpers/helpers.dart';
 import '../mocks/mocks.dart';
 
 void main() {
@@ -15,14 +15,7 @@ void main() {
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = SignUpPresenterMock();
-    final signupPage = GetMaterialApp(
-      initialRoute: '/singup',
-      getPages: [
-        GetPage(name: '/singup', page: () => SignUpPage(presenter: presenter)),
-        GetPage(name: '/fakePage', page: () => const Scaffold(body: Text('fakePage')))
-      ],
-    );
-    await tester.pumpWidget(signupPage);
+    await tester.pumpWidget(pageFactory(initialRoute: '/singup', page: () => SignUpPage(presenter: presenter)));
   }
 
   testWidgets('Should call validate with the correct values', (WidgetTester tester) async {
@@ -185,11 +178,11 @@ void main() {
   testWidgets('Should change page', (WidgetTester tester) async {
     await loadPage(tester);
 
-    presenter.natigateToPageController.add('/fakePage');
+    presenter.natigateToPageController.add('/fake_page');
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/fakePage');
-    expect(find.text('fakePage'), findsOneWidget);
+    expect(currentRoute, '/fake_page');
+    expect(find.text('fake_page'), findsOneWidget);
   });
 
   testWidgets('Should not change page', (widgetTester) async {
@@ -198,6 +191,6 @@ void main() {
     presenter.emitNavigateToPage('');
     await widgetTester.pump();
 
-    expect(Get.currentRoute, '/singup');
+    expect(currentRoute, '/singup');
   });
 }

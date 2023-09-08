@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 
+import '../helpers/helpers.dart';
 import '../mocks/mocks.dart';
 
 void main() {
@@ -12,15 +12,7 @@ void main() {
 
   Future<void> loadPage(WidgetTester widgetTester) async {
     presenter = SplashPresenterSpy();
-    await widgetTester.pumpWidget(
-      GetMaterialApp(
-        initialRoute: '/',
-        getPages: [
-          GetPage(name: '/', page: () => SplashPage(presenter: presenter)),
-          GetPage(name: '/fakePage', page: () => const Scaffold(body: Text('fake page'))),
-        ],
-      )
-    );
+    await widgetTester.pumpWidget(pageFactory(initialRoute: '/', page: () => SplashPage(presenter: presenter)));
   }
 
   tearDown(() => presenter.dispose());
@@ -40,11 +32,11 @@ void main() {
   testWidgets('Should change page', (widgetTester) async {
     await loadPage(widgetTester);
 
-    presenter.emitNavigateToPage('/fakePage');
+    presenter.emitNavigateToPage('/fake_page');
     await widgetTester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/fakePage');
-    expect(find.text('fake page'), findsOneWidget);
+    expect(currentRoute, '/fake_page');
+    expect(find.text('fake_page'), findsOneWidget);
   });
 
   testWidgets('Should not change page', (widgetTester) async {
@@ -53,6 +45,6 @@ void main() {
     presenter.emitNavigateToPage('');
     await widgetTester.pump();
 
-    expect(Get.currentRoute, '/');
+    expect(currentRoute, '/');
   });
 }

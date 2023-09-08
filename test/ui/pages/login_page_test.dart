@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:faker/faker.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 
+import '../helpers/helpers.dart';
 import '../mocks/mocks.dart';
 
 void main() {
@@ -15,14 +15,7 @@ void main() {
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterMock();
-    final loginPage = GetMaterialApp(
-      initialRoute: '/login',
-      getPages: [
-        GetPage(name: '/login', page: () => LoginPage(presenter: presenter)),
-        GetPage(name: '/fake_page', page: () => const Scaffold(body: Text('fake_page')))
-      ],
-    );
-    await tester.pumpWidget(loginPage);
+    await tester.pumpWidget(pageFactory(initialRoute: '/login', page: () => LoginPage(presenter: presenter)));
   }
 
   tearDown(() => presenter.dispose());
@@ -161,7 +154,7 @@ void main() {
     presenter.natigateToPageController.add('/fake_page');
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/fake_page');
+    expect(currentRoute, '/fake_page');
     expect(find.text('fake_page'), findsOneWidget);
   });
 
@@ -171,6 +164,6 @@ void main() {
     presenter.emitNavigateToPage('');
     await widgetTester.pump();
 
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
   });
 }

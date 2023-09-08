@@ -1,28 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 
+import '../helpers/helpers.dart';
 import '../mocks/mocks.dart';
 
 void main() {
   late SurveysPresenterMock presenter;
   Future<void> loadPage(WidgetTester tester) async {
-    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
     presenter = SurveysPresenterMock();
-    final surveysPage = GetMaterialApp(
-      initialRoute: '/surveys',
-      navigatorObservers: [routeObserver],
-      getPages: [
-        GetPage(name: '/surveys', page: () => SurveysPage(presenter: presenter)),
-        GetPage(name: '/fake_page', page: () => Scaffold(appBar: AppBar(title: const Text('fake_page')), body: const Text('fake_page'))),
-        GetPage(name: '/login', page: () => const Scaffold(body: Text('fake_login_page')))
-      ],
-    );
-    await tester.pumpWidget(surveysPage);
+    await tester.pumpWidget(pageFactory(initialRoute: '/surveys', page: () => SurveysPage(presenter: presenter)));
   }
 
   tearDown(() => presenter.dispose());
@@ -110,7 +100,7 @@ void main() {
     presenter.natigateToPageController.add('/fake_page');
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/fake_page');
+    expect(currentRoute, '/fake_page');
     expect(find.text('fake_page'), findsOneWidget);
   });
 
@@ -119,7 +109,7 @@ void main() {
 
     presenter.emitSessionExpired(true);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
   });
 
   testWidgets('Should not logout', (WidgetTester tester) async {
@@ -127,6 +117,6 @@ void main() {
 
     presenter.emitSessionExpired(false);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/surveys');
+    expect(currentRoute, '/surveys');
   });
 }

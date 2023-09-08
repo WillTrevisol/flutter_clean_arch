@@ -2,25 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:get/get.dart';
 
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 
+import '../helpers/helpers.dart';
 import '../mocks/mocks.dart';
 
 void main() {
   late SurveyResultPresenterMock presenter;
   Future<void> loadPage(WidgetTester tester) async {
     presenter = SurveyResultPresenterMock();
-    final surveysPage = GetMaterialApp(
-      initialRoute: '/survey_result/any_survey_id',
-      getPages: [
-        GetPage(name: '/survey_result/:survey_id', page: () => SurveyResultPage(presenter: presenter)),
-        GetPage(name: '/login', page: () => const Scaffold(body: Text('fake_login_page'))),
-      ],
+    await mockNetworkImagesFor(
+      () async => await tester.pumpWidget(
+        pageFactory(initialRoute: '/survey_result/any_survey_id', page: () => SurveyResultPage(presenter: presenter)),
+      ),
     );
-    await mockNetworkImagesFor(() async => await tester.pumpWidget(surveysPage));
   }
 
   tearDown(() => presenter.dispose());
@@ -91,7 +88,7 @@ void main() {
     presenter.emitSessionExpired(true);
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
   });
 
   testWidgets('Should not logout', (WidgetTester tester) async {
@@ -100,7 +97,7 @@ void main() {
     presenter.emitSessionExpired(false);
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/survey_result/any_survey_id');
+    expect(currentRoute, '/survey_result/any_survey_id');
   });
 
   testWidgets('Should call save on list item receives a click', (WidgetTester widgetTester) async {
