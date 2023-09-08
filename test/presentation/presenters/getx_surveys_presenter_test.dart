@@ -67,8 +67,9 @@ void main() {
   });
 
   test('Should go to SurveyResultPage on survey click', () async {
-    systemUnderTest.navigateToPageStream.listen(expectAsync1((page) => expect(page, '/survey_result/1')));
+    expectLater(systemUnderTest.navigateToPageStream, emitsInOrder(['/survey_result/1', '/survey_result/1']));
 
+    systemUnderTest.navigateToSurveyResultPage('1');
     systemUnderTest.navigateToSurveyResultPage('1');
   });
 }
