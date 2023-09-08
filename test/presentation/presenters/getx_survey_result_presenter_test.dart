@@ -118,5 +118,20 @@ void main() {
 
       await systemUnderTest.save(answer: answer);
     });
+
+    test('Should emit correct events on failure', () async {
+      saveSurveyResult.mockSaveError(DomainError.unexpected);
+      expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+      systemUnderTest.surveyResultStream.listen(null, onError: expectAsync2((error, stackTrace) => expect(error, UiError.unexpected.description)));
+
+      await systemUnderTest.save(answer: answer);
+    });
+
+    test('Should emit correct events on access denied', () async {
+      saveSurveyResult.mockSaveError(DomainError.accessDenied);
+      expectLater(systemUnderTest.sessionExpiredStream, emits(true));
+
+      await systemUnderTest.save(answer: answer);
+    });
   });
 }
