@@ -108,8 +108,18 @@ void main() {
 
     presenter.emitSurveyResult(ViewEntityFactory.surveyResult());
     await mockNetworkImagesFor(() async => await widgetTester.pump());
+    await widgetTester.tap(find.text('Answer 2'));
+
+    verify(()=> presenter.save(answer: 'Answer 2')).called(1);
+  });
+
+  testWidgets('Should not call save when current answer receives a click', (WidgetTester widgetTester) async {
+    await loadPage(widgetTester);
+
+    presenter.emitSurveyResult(ViewEntityFactory.surveyResult());
+    await mockNetworkImagesFor(() async => await widgetTester.pump());
     await widgetTester.tap(find.text('Answer 1'));
 
-    verify(()=> presenter.save(answer: 'Answer 1')).called(1);
+    verifyNever(()=> presenter.save(answer: 'Answer 1'));
   });
 }
