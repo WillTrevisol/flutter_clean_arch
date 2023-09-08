@@ -7,9 +7,10 @@ import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 
 class GetxSurveyResultPresenter extends GetxController with LoadingManager, SessionManager implements SurveyResultPresenter {
-  GetxSurveyResultPresenter({required this.loadSurveyResult, required this.surveyId});
+  GetxSurveyResultPresenter({required this.loadSurveyResult, required this.saveSurveyResult, required this.surveyId});
 
   final LoadSurveyResult loadSurveyResult;
+  final SaveSurveyResult saveSurveyResult;
   final String surveyId;
 
   final _surveyResult = Rx<SurveyResultViewEntity?>(null);
@@ -57,6 +58,7 @@ class GetxSurveyResultPresenter extends GetxController with LoadingManager, Sess
   
   @override
   Future<void> save({required String answer}) async {
+    await saveSurveyResult.save(answer: answer);
   }
 
 }

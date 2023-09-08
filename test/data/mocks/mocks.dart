@@ -10,3 +10,4 @@ export 'delete_secure_cache_storage_mock.dart';
 export 'local_cache_storage_mock.dart';
 export 'remote_load_survey_result_mock.dart';
 export 'local_load_survey_result_mock.dart';
+export 'save_survey_result_mock.dart';

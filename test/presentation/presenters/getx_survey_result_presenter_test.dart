@@ -13,62 +13,77 @@ void main() {
 
   late GetxSurveyResultPresenter systemUnderTest;
   late LoadSurveyResultMock loadSurveyResult;
+  late SaveSurveyResultMock saveSurveyResult;
   late String surveyId;
+  late String answer;
 
   setUp(() {
     surveyId = faker.guid.guid();
+    answer = faker.lorem.sentence();
+    saveSurveyResult = SaveSurveyResultMock();
     loadSurveyResult = LoadSurveyResultMock();
     systemUnderTest = GetxSurveyResultPresenter(
       loadSurveyResult: loadSurveyResult,
+      saveSurveyResult: saveSurveyResult,
       surveyId: surveyId,
     );
   });
 
   tearDown(() => systemUnderTest.dispose());
 
-  test('Should call LoadSurveyResult on loadData', () async {
-    await systemUnderTest.loadData();
+  group('loadData', () {
+    test('Should call LoadSurveyResult on loadData', () async {
+      await systemUnderTest.loadData();
 
-    verify(() => loadSurveyResult.loadBySurvey(surveyId: surveyId)).called(1);
+      verify(() => loadSurveyResult.loadBySurvey(surveyId: surveyId)).called(1);
+    });
+
+    test('Should emit correct events on success', () async {
+      expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+      systemUnderTest.surveyResultStream.listen(expectAsync1((surveyResult) => expect(surveyResult!,
+        SurveyResultViewEntity(
+          surveyId: surveyResult.surveyId,
+          question: surveyResult.question,
+          answers: <SurveyAnswerViewEntity> [
+            SurveyAnswerViewEntity(
+              image: surveyResult.answers[0].image,
+              answer: surveyResult.answers[0].answer,
+              isCurrentAccountAnswer: surveyResult.answers[0].isCurrentAccountAnswer,
+              percent: surveyResult.answers[0].percent,
+            ),
+            SurveyAnswerViewEntity(
+              answer: surveyResult.answers[1].answer,
+              isCurrentAccountAnswer: surveyResult.answers[1].isCurrentAccountAnswer,
+              percent: surveyResult.answers[1].percent,
+            ),
+          ],
+        ),
+      )));
+
+      await systemUnderTest.loadData();
+    });
+
+    test('Should emit correct events on failure', () async {
+      loadSurveyResult.mockLoadBySurveyError(DomainError.unexpected);
+      expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+      systemUnderTest.surveyResultStream.listen(null, onError: expectAsync2((error, stackTrace) => expect(error, UiError.unexpected.description)));
+
+      await systemUnderTest.loadData();
+    });
+
+    test('Should emit correct events on access denied', () async {
+      loadSurveyResult.mockLoadBySurveyError(DomainError.accessDenied);
+      expectLater(systemUnderTest.sessionExpiredStream, emits(true));
+
+      await systemUnderTest.loadData();
+    });
   });
 
-  test('Should emit correct events on success', () async {
-    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
-    systemUnderTest.surveyResultStream.listen(expectAsync1((surveyResult) => expect(surveyResult!,
-      SurveyResultViewEntity(
-        surveyId: surveyResult.surveyId,
-        question: surveyResult.question,
-        answers: <SurveyAnswerViewEntity> [
-          SurveyAnswerViewEntity(
-            image: surveyResult.answers[0].image,
-            answer: surveyResult.answers[0].answer,
-            isCurrentAccountAnswer: surveyResult.answers[0].isCurrentAccountAnswer,
-            percent: surveyResult.answers[0].percent,
-          ),
-          SurveyAnswerViewEntity(
-            answer: surveyResult.answers[1].answer,
-            isCurrentAccountAnswer: surveyResult.answers[1].isCurrentAccountAnswer,
-            percent: surveyResult.answers[1].percent,
-          ),
-        ],
-      ),
-    )));
+  group('save', () {
+    test('Should call SaveSurveyResult on save', () async {
+      await systemUnderTest.save(answer: answer);
 
-    await systemUnderTest.loadData();
-  });
-
-  test('Should emit correct events on failure', () async {
-    loadSurveyResult.mockLoadBySurveyError(DomainError.unexpected);
-    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
-    systemUnderTest.surveyResultStream.listen(null, onError: expectAsync2((error, stackTrace) => expect(error, UiError.unexpected.description)));
-
-    await systemUnderTest.loadData();
-  });
-
-  test('Should emit correct events on access denied', () async {
-    loadSurveyResult.mockLoadBySurveyError(DomainError.accessDenied);
-    expectLater(systemUnderTest.sessionExpiredStream, emits(true));
-
-    await systemUnderTest.loadData();
+      verify(() => saveSurveyResult.save(answer: answer)).called(1);
+    });
   });
 }
