@@ -58,7 +58,19 @@ class GetxSurveyResultPresenter extends GetxController with LoadingManager, Sess
   
   @override
   Future<void> save({required String answer}) async {
-    await saveSurveyResult.save(answer: answer);
+    setIsLoading = true;
+    final surveyResult = await saveSurveyResult.save(answer: answer);
+    _surveyResult.value = SurveyResultViewEntity(
+      surveyId: surveyId,
+      question: surveyResult.question,
+      answers: surveyResult.answers.map((answer) => SurveyAnswerViewEntity(
+        image: answer.image,
+        answer: answer.answer,
+        isCurrentAccountAnswer: answer.isCurrentAccountAnswer,
+        percent: '${answer.percent}%',
+      )).toList(),
+    );
+    setIsLoading = false;
   }
 
 }
