@@ -20,7 +20,7 @@ class SurveyResultView extends StatelessWidget {
         final answer = viewEntity.answers[index - 1];
         return GestureDetector(
           onTap: () => answer.isCurrentAccountAnswer ? null : onSave(answer: answer.answer),
-          child: SurveyAnswer(answer: answer),
+          child: SurveyAnswerView(answer: answer),
         );
       },
     );

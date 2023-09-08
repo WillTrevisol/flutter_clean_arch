@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import 'package:clean_arch/presentation/mixins/mixins.dart';
+import 'package:clean_arch/presentation/helpers/helpers.dart';
 import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
 import 'package:clean_arch/domain/helpers/helpers.dart';
@@ -37,16 +38,7 @@ class GetxSurveyResultPresenter extends GetxController with LoadingManager, Sess
     try {
       setIsLoading = true;
       final surveyResult = await call();
-      _surveyResult.value = SurveyResultViewEntity(
-        surveyId: surveyId,
-        question: surveyResult.question,
-        answers: surveyResult.answers.map((answer) => SurveyAnswerViewEntity(
-          image: answer.image,
-          answer: answer.answer,
-          isCurrentAccountAnswer: answer.isCurrentAccountAnswer,
-          percent: '${answer.percent}%',
-        )).toList(),
-      );
+      _surveyResult.subject.add(surveyResult.toViewEntity());
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied) {
         setSessionExpired = true;

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 
-class SurveyAnswer extends StatelessWidget {
-  const SurveyAnswer({
+class SurveyAnswerView extends StatelessWidget {
+  const SurveyAnswerView({
     super.key,
     required this.answer,
   });
