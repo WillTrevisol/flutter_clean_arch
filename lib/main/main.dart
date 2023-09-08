@@ -16,12 +16,13 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
+    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'CleanArch',
       theme: appThemeData(),
       initialRoute: '/',
+      navigatorObservers: [routeObserver],
       getPages: [
         GetPage(name: '/', page: splashPageFactory, transition: Transition.fade),
         GetPage(name: '/login', page: loginPageFactory, transition: Transition.fadeIn),
