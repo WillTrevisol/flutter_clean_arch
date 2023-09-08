@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:clean_arch/ui/pages/pages.dart';
 
-class SurveyResult extends StatelessWidget {
-  const SurveyResult({super.key, required this.viewEntity, required this.onSave});
+class SurveyResultView extends StatelessWidget {
+  const SurveyResultView({super.key, required this.viewEntity, required this.onSave});
 
   final SurveyResultViewEntity viewEntity;
   final Future<void> Function({required String answer}) onSave; 

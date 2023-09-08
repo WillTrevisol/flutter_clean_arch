@@ -30,7 +30,7 @@ class SurveyResultPage extends StatelessWidget with LoadingManager, SessionManag
               }
 
               if (snapshot.hasData) {
-                return SurveyResult(
+                return SurveyResultView(
                   viewEntity: snapshot.data!,
                   onSave: presenter.save,
                 );

@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 
 import 'package:clean_arch/presentation/mixins/mixins.dart';
-import 'package:clean_arch/domain/helpers/helpers.dart';
+import 'package:clean_arch/domain/entities/entities.dart';
 import 'package:clean_arch/domain/usecases/usecases.dart';
+import 'package:clean_arch/domain/helpers/helpers.dart';
 import 'package:clean_arch/ui/helpers/helpers.dart';
 import 'package:clean_arch/ui/pages/pages.dart';
 
@@ -24,9 +25,18 @@ class GetxSurveyResultPresenter extends GetxController with LoadingManager, Sess
 
   @override
   Future<void> loadData() async {
+    resultCall(() => loadSurveyResult.loadBySurvey(surveyId: surveyId));
+  }
+
+  @override
+  Future<void> save({required String answer}) async {
+    resultCall(() => saveSurveyResult.save(answer: answer));
+  }
+
+  Future<void> resultCall(Future<SurveyResult> Function() call) async {
     try {
       setIsLoading = true;
-      final surveyResult = await loadSurveyResult.loadBySurvey(surveyId: surveyId);
+      final surveyResult = await call();
       _surveyResult.value = SurveyResultViewEntity(
         surveyId: surveyId,
         question: surveyResult.question,
@@ -54,32 +64,6 @@ class GetxSurveyResultPresenter extends GetxController with LoadingManager, Sess
     disposeSessionExpired();
     _surveyResult.close();
     super.dispose();
-  }
-  
-  @override
-  Future<void> save({required String answer}) async {
-    try {
-      setIsLoading = true;
-      final surveyResult = await saveSurveyResult.save(answer: answer);
-      _surveyResult.value = SurveyResultViewEntity(
-        surveyId: surveyId,
-        question: surveyResult.question,
-        answers: surveyResult.answers.map((answer) => SurveyAnswerViewEntity(
-          image: answer.image,
-          answer: answer.answer,
-          isCurrentAccountAnswer: answer.isCurrentAccountAnswer,
-          percent: '${answer.percent}%',
-        )).toList(),
-      );
-    } on DomainError catch (error) {
-      if (error == DomainError.accessDenied) {
-        setSessionExpired = true;
-      } else {
-        _surveyResult.subject.addError(UiError.unexpected.description, StackTrace.current);
-      }
-    } finally {
-      setIsLoading = false;
-    }
   }
 
 }
